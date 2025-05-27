@@ -1,0 +1,278 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                                       %%%%%
+%%%%%                                     TITLE PAGE                             %%%%%
+%%%%%                                                                                       %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman} \setcounter{page}{1}
+\newcommand{\BF}[1]{\mbox{\boldmath$#1$}}
+\clearpage
+\thispagestyle{empty}
+
+\begin{center}
+\singlespacing
+\vspace*{\fill}
+\Large{\bf Title}
+
+
+\normalsize{
+\vspace{15mm}
+
+by
+
+Kamal Aslam
+
+\vspace{15mm}
+
+A Thesis\\
+
+presented to \\
+The University of Guelph
+
+\vspace{15mm}
+
+In partial fulfilment of requirements\\
+for the degree of \\
+Master of Science \\
+in\\
+Mathematics
+
+\vspace{15mm}
+
+Guelph, Ontario, Canada
+
+\copyright \:William J. Rutherford, January, 2025
+
+}
+\end{center}
+\vspace*{\fill}
+
+\newpage
+\clearpage
+\thispagestyle{empty}
+\addcontentsline{toc}{chapter}{Abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                                       %%%%%
+%%%%%                                   ABSTRACT                                 %%%%%
+%%%%%                                                                                       %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center} ABSTRACT \\
+\vspace{10mm}
+
+\end{center}
+\vspace{10mm}
+
+
+\noindent{Kamal Aslam\hfill Co-advisors:\hspace{15mm}}
+
+\noindent{University of Guelph, 2025	\hfill	Dr. William R. Smith} \\
+\hspace*{128mm} Dr. Mihai Nica
+
+\vspace{15mm}
+
+The accurate prediction of amine pKa values is a significant and persistent challenge within computational chemistry, possessing critical implications for drug discovery and material science. This thesis presents a comprehensive investigation into this problem, systematically evaluating a range of machine learning models and diverse molecular feature representations. The study encompasses Graph Convolutional Networks (GCNs), Multi-Layer Perceptrons (MLPs), Random Forests, Support Vector Regression (SVR), and XGBoost, implemented both as standalone predictive models and within novel fusion architectures. These models were rigorously trained and validated on two distinct datasets of amine compounds: one derived from ChEMBL, filtered to include molecules with up to 12 carbon atoms ("Chembl 12C"), and another from IUPAC sources ("Iupac"). Both datasets were specifically curated to contain amines composed solely of carbon, hydrogen, nitrogen, and oxygen atoms, under standardized experimental conditions.   
+
+The central contribution of this research is the demonstration that hybrid modeling approaches, specifically those integrating Graph Neural Networks (GNNs) with established ensemble learning techniques, offer enhanced predictive performance for amine pKa values. Notably, a fusion architecture combining a GCN with an XGBoost model and GCN with an MLP/FFNN model yielded superior results. Within this optimal configuration, the GCN component effectively utilized a set of 8 aggregated atomic-level descriptors augmented with Gasteiger partial charges ("data G1"). The output from this GCN, serving as learned molecular embeddings, was then processed by an XGBoost/MLP model that additionally incorporated Benson group features. The efficacy of this GCN-XGBoost and GCN-MLP fusion was observed across both datasets and was quantified by improvements in key statistical metrics, including Mean Squared Error (MSE) and the coefficient of determination (R²).   
+
+These findings underscore the potential of synergistic GNN-ensemble models in tackling complex quantitative structure-property relationship (QSPR) tasks. The enhanced accuracy achieved by leveraging graph-based representations for atomic environments, combined with the robust predictive power of gradient boosting methods on curated chemical fragment data, suggests a promising direction for future advancements in pKa prediction and related cheminformatics challenges.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                                       %%%%%
+%%%%%                   ACKNOWLEDGEMENTS                           %%%%%
+%%%%%                                                                                       %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter*{Acknowledgements}
+\doublespacing 
+\addcontentsline{toc}{chapter}{Acknowledgements}
+All thanks to Dr. Smith, and Dr. Nica
+
+\chapter{Introduction}
+
+\section*{Predicting Amine pKa using ML Models}
+
+This work investigates the prediction of pKa values for amine-containing molecules using a variety of machine learning models and different representations of molecular structure and properties. The study compares the performance of Graph Convolutional Networks (GCNs), Multi-Layer Perceptrons (MLPs), Random Forests, Support Vector Regression (SVR), and XGBoost, both as standalone models and in fusion architectures. The models were trained and evaluated on two distinct datasets: Amines from Chembl up to 12C, and amines from Iupac. Both datasets only contain amines with C, H, N and O atoms.
+
+\section*{Dataset}
+
+The two datasets used are \href{https://github.com/IUPAC/Dissociation-Constants}{IuPac} and chembl up to 12 carbon amines(Chembl 12C).
+
+Below is a list of filters applied to both IuPac and Chembl 12C
+\begin{enumerate}
+    \item Molecule is a primary, secondary or tertiary amine and Is not an Amide(put code here)
+    \item Molecule contains only C, H, N and O atoms and (remove in final draft: not Sulfur or Silicone)
+    \item type of measurement is pKaH1, NOT pKaH2 or any other type
+    \item temp of measurement is 25 celcius
+    \item There can be no repeat inchi keys. The one with the highest pka value is selected in case there are multiple same inchi keys.
+    \item If RDKit can't parse the Smiles string, we filter that molecule out
+    \item take out protonated molecules
+\end{enumerate}
+
+IUPAC is used as training and external test set
+
+For filters 1, amines are different from nitrogen containing functional groups (like amides) because of the type of nitrogen atom and its bonding. We're focusing on a specific chemical family and filter 1 ensure our data is relevant to that family, ensuring the model learns patterns unique to amine basicity, rather than mixing the learning with other nitrogen-containing functional groups with distinct pka behaviours.
+
+For filter 2, we're only interested in Carbon capture molecules that contain C,H,N and O. examples of such molecules are amines and Alkanalamines
+
+For filter 3, pkah1 refers to the  site that yields the largest pKa reaction. Often, its the most relevant in most studies and has the most data. This ensures consistency and accuracy in what our model is predicting and avoids ambiguity. 
+
+For filter 4, pka values are temperature dependent. 25 degrees Celsius has the most available data for amines. By removing the amines at different temperature, we ensure that our model is predicting pka's at 25 degrees.
+
+For filter 5, molecules can appear multiple times in a database due to different experimental conditions. There is no specific reason to select the highest pka other than to keep the method consistent for resolving conflicting entries. And we don't want the model to learn a specific molecule too well. (Make it brief and just say you choose it arbitrarily)
+
+For filter 7, if RDKit can't parse a smiles string, it usually means that the string is malformed or represents and invalid chemical structure. Some of our features are generated directly RDKit. By filtering out these molecules, we ensure the molecules are computationally traceable for descriptor generation and model input.(Include how many RDKit choked on)
+
+For Chembl 12 C, there are 5899 unique molecules and their CX Basic pka is 0.65 - 12.89. Below is the distribution of Amine class and molecular species.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Amine Class} & \textbf{Percentage (\%)} \\
+\hline
+Primary   & 35.82 \\
+Secondary & 34.18 \\
+Tertiary  & 30.01 \\
+\hline
+\end{tabular}
+\caption{Percentage distribution of Amine Class}
+\label{tab:amine_distribution}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Molecular Species} & \textbf{Count} \\
+\hline
+BASE    & 3960 \\
+NEUTRAL & 1928 \\
+ACID    & 11 \\
+\hline
+\end{tabular}
+\caption{Unique values and counts for \texttt{Molecular Species}}
+\label{tab:molecular_species_counts}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Distribution of SMILES String Length in Chembl 12C.png}
+    \caption{Distribution of SMILES String Length in Chembl}
+    \label{fig:smiles_length}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Distribution of CX Basic pKa Values in Chembl 12C.png}
+    \caption{Distribution of CX Basic pKa Values in Chembl}
+    \label{fig:cx_pka}
+\end{figure}
+
+For Iupac dataset, there are 1530 amines with a range of -10.01 - 14.00. Below are the same graphs for comparison with Chembl.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Distribution of SMILES String Lengths in IuPac Dataset.png}
+    \caption{Distribution of SMILES String Length in IuPac Dataset}
+    \label{fig:smiles_length}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Distribution of pka_value in IuPac Dataset.png}
+    \caption{Distribution of CX Basic pKa Values in IuPac Dataset}
+    \label{fig:cx_pka}
+\end{figure}
+
+\section*{Machine Learning Features}
+
+The study utilizes several representations of the amine molecules:
+
+\subsection*{\texttt{data\_8\_atomic\_descriptors}: Atomic Descriptors}
+
+The `data\_8\_atomic\_descriptors` dataset employs a set of 8 molecular descriptors, where each molecule is represented by a single 8-dimensional vector. These descriptors are derived from atom-level properties:
+
+\begin{enumerate}
+    \item \textbf{Atomic Number}
+    \item \textbf{Formal Charge}
+    \item \textbf{Degree} 
+    \item \textbf{Total Number of Hydrogens}
+    \item \textbf{Is Aromatic} 
+    \item \textbf{Hybridization}
+    \item \textbf{Is In Ring}
+    \item \textbf{Mass} 
+\end{enumerate}
+
+It is important to note that for the `data\_8\_atomic\_descriptors` dataset, these atom-level features are aggregated across all atoms within a molecule to yield a fixed-size molecular descriptor vector, which then serves as the input for machine learning models like GCN.
+
+\subsection*{\texttt{data\_Gasteiger\_Charge}: Atomic Descriptors}
+
+The `data\_Gasteiger\_Charge` dataset employs a set of 1 molecular descriptors. This feature is used in combination with data\_8\_atomic\_descriptors.
+
+\begin{enumerate}
+    \item \textbf{Gasteiger Charge} 
+\end{enumerate}
+
+
+\subsection*{\texttt{data\_AM1BCC\_Partial\_Charge}: Atomic Descriptors}
+
+The `data\_AM1BCC\_Partial\_Charge` dataset employs a set of 1 molecular descriptors. This feature is used in combination with data\_8\_atomic\_descriptors.
+
+\begin{enumerate}
+    \item \textbf{AM1BCC\_Partial\_Charge} 
+\end{enumerate}
+ 
+
+
+\subsection*{\texttt{data\_Computational\_Sigma\_Profile}: Sigma Profiles}
+
+ Sigma profiles are descriptors that capture the electronic properties of atoms within a molecule.
+
+
+\subsection*{\texttt{data\_Mcginn\_Sigma\_Profile}: GCN-Predicted Sigma Profiles}
+
+The `data\_Mcginn\_Sigma\_Profile` dataset utilizes sigma profiles that were \textit{predicted} using a Graph Convolutional Network. This allows for the generation of electronic descriptors for a broader set of molecules.
+
+
+\subsection*{\texttt{data\_benson\_groups}: Benson Groups}
+
+The `data\_benson\_groups` dataset employs Benson groups, which are structural fragments contributing to a molecule's thermodynamic properties. These are one-hot encoded and scaled.
+
+\subsection*{\texttt{data\_Morgan\_FingerPrints}: Morgan Fingerprints}
+The 'data\_Morgan\_Fingerprints' dataset employs Morgan Fingerprints. Morgan Fingerprints are a type of circular molecular fingerprint commonly used in cheminformatics and machine learning.
+
+\section*{Machine Learning Models}
+
+
+The study evaluates the performance of the following machine learning models:
+
+\begin{enumerate}
+\item \textbf{GCN}: A Graph Convolutional Network that directly operates on the molecular graph structure, using the atom-level features described for data\_8\_atomic\_descriptors + data\_Gasteiger\_Charge (data\_G1) and data\_8\_atomic\_descriptors + data\_AM1BCC\_Partial\_Charge(data\_A1). The architecture consists of three convolutional layers with batch normalization, ReLU activation, and dropout.
+\item \textbf{GCN + MLP Fusion}: A model that combines the output of the GCN (trained on data\_A1 or data\_G1) with a Multi-Layer Perceptron (MLP) trained on the one-hot encoded and scaled Benson group vectors and/or sigma profiles. The outputs of these two branches are concatenated and passed through further linear layers for the final pKa prediction. In total, there are six possibilities for the input features:
+\begin{enumerate}
+    \item data\_A1 + Benson Groups
+    \item data\_A1 + Sigma Profile
+    \item data\_A1 + Benson Groups + Sigma Profile
+    \item data\_G1 + Benson Groups
+    \item data\_G1 + Sigma Profile
+    \item data\_G1 + Benson Groups + Sigma Profile
+\end{enumerate}
+\item \textbf{GCN + XGBoost Fusion}: Similar to the GCN + MLP fusion, but the GCN's output is combined with features derived from Benson groups and/or sigma profile and then inputted into an XGBoost.
+\item \textbf{MLP}: A Multi-Layer Perceptron trained on different molecular representations, including Sigma Profiles, Benson Groups and Morgan FingerPrints
+\item \textbf{Random Forest}: An ensemble learning method based on decision trees, applied to Sigma Profiles
+\item \textbf{SVR}: Support Vector Regression, a powerful method for regression tasks, evaluated on Sigma Profiles 
+\item \textbf{XGBoost}: An optimized gradient boosting algorithm known for its high performance in various machine learning tasks, applied to molecular embeddings extracted from GCN, Sigma Profiles, Benson Groups and Morgan Fingerprints
+\end{enumerate}
+
+All models were trained with differing hyperparameters, which were likely tuned to optimize their performance on the respective datasets.
+
+\section*{Evaluation}
+
+The performance of each model on each dataset was evaluated using several metrics, including Mean Absolute Error (MAE), Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and the coefficient of determination (R 
+2)
