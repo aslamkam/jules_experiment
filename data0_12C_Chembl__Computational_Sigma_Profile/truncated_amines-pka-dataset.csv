@@ -1,0 +1,6 @@
+ID,formula,amine_class,smiles,idx,acid_or_base,pka_type,pka_value,source,inchi_key
+1,C26H27N3O3,tertiary,Cc1oc(-c2ccccc2)nc1CN(C)Cc1ccc(C[C@@H](C(=O)O)n2cccc2)cc1,13,base,pKAH1,6.99,chembl,FCXQPXFVLDZXHP-DEOSSOPVSA-N
+2,C25H31N5O2,tertiary,Cc1ccc(NC(=O)Nc2ccc(OCCN3CCCCC3)c(-c3ccnn3C)c2)cc1,16,base,pKAH1,8.94,chembl,CLTKQFKWKQEFET-UHFFFAOYSA-N
+3,C24H25NO2,tertiary,COc1cc2c(cc1OC)CN(Cc1ccc(-c3ccccc3)cc1)CC2,11,base,pKAH1,7.69,chembl,YUOFPIFTPKDZRM-UHFFFAOYSA-N
+4,C11H23NO2,secondary,CC(C)(C)NCC(O)COCC1CC1,4,base,pKAH1,9.96,chembl,RCQOXCMWPCHBLE-UHFFFAOYSA-N
+5,C20H23N9O,tertiary,CNc1cc(Nc2cnc(C#N)c(O[C@@H]3CCN(C)C3)n2)ncc1-c1cnn(C)c1,17,base,pKAH1,7.79,chembl,AQNABTLMNVINSV-CQSZACIVSA-N

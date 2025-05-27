@@ -1,0 +1,93 @@
+; CHEMBL296723_GMX.itp created by acpype (v: 2023.11.14) on Wed May  7 15:12:46 2025
+
+[ atomtypes ]
+;name   bond_type     mass     charge   ptype   sigma         epsilon       Amb
+ n3       n3          0.00000  0.00000   A     3.25000e-01   7.11280e-01 ; 1.82  0.1700
+ c3       c3          0.00000  0.00000   A     3.39967e-01   4.57730e-01 ; 1.91  0.1094
+ c        c           0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ o        o           0.00000  0.00000   A     2.95992e-01   8.78640e-01 ; 1.66  0.2100
+ hn       hn          0.00000  0.00000   A     1.06908e-01   6.56888e-02 ; 0.60  0.0157
+ h1       h1          0.00000  0.00000   A     2.47135e-01   6.56888e-02 ; 1.39  0.0157
+ h4       h4          0.00000  0.00000   A     2.51055e-01   6.27600e-02 ; 1.41  0.0150
+
+[ moleculetype ]
+;name            nrexcl
+ CHEMBL296723     3
+
+[ atoms ]
+;   nr  type  resi  res  atom  cgnr     charge      mass       ; qtot   bond_type
+     1   n3     1   UNL     N    1    -0.915800     14.01000 ; qtot -0.916
+     2   c3     1   UNL    CA    2     0.035800     12.01000 ; qtot -0.880
+     3    c     1   UNL     C    3     0.563900     12.01000 ; qtot -0.316
+     4    o     1   UNL     O    4    -0.530100     16.00000 ; qtot -0.846
+     5   hn     1   UNL    H1    5     0.357300      1.00800 ; qtot -0.489
+     6   hn     1   UNL    H2    6     0.357300      1.00800 ; qtot -0.132
+     7   h1     1   UNL   HA1    7     0.058200      1.00800 ; qtot -0.073
+     8   h1     1   UNL   HA2    8     0.058200      1.00800 ; qtot -0.015
+     9   h4     1   UNL     H    9     0.015200      1.00800 ; qtot 0.000
+
+[ bonds ]
+;   ai     aj funct   r             k
+     1      2   1    1.4647e-01    2.7271e+05 ;      N - CA    
+     1      5   1    1.0190e-01    3.2836e+05 ;      N - H1    
+     1      6   1    1.0190e-01    3.2836e+05 ;      N - H2    
+     2      3   1    1.5241e-01    2.6192e+05 ;     CA - C     
+     2      7   1    1.0969e-01    2.7665e+05 ;     CA - HA1   
+     2      8   1    1.0969e-01    2.7665e+05 ;     CA - HA2   
+     3      4   1    1.2183e-01    5.3363e+05 ;      C - O     
+     3      9   1    1.1121e-01    2.5999e+05 ;      C - H     
+
+[ pairs ]
+;   ai     aj    funct
+     1      4      1 ;      N - O     
+     1      9      1 ;      N - H     
+     4      7      1 ;      O - HA1   
+     4      8      1 ;      O - HA2   
+     5      3      1 ;     H1 - C     
+     5      7      1 ;     H1 - HA1   
+     5      8      1 ;     H1 - HA2   
+     6      3      1 ;     H2 - C     
+     6      7      1 ;     H2 - HA1   
+     6      8      1 ;     H2 - HA2   
+     7      9      1 ;    HA1 - H     
+     8      9      1 ;    HA2 - H     
+
+[ angles ]
+;   ai     aj     ak    funct   theta         cth
+     1      2      3      1    1.1114e+02    5.5480e+02 ;      N - CA     - C     
+     1      2      7      1    1.0988e+02    4.1422e+02 ;      N - CA     - HA1   
+     1      2      8      1    1.0988e+02    4.1422e+02 ;      N - CA     - HA2   
+     2      1      5      1    1.0929e+02    3.9664e+02 ;     CA - N      - H1    
+     2      1      6      1    1.0929e+02    3.9664e+02 ;     CA - N      - H2    
+     2      3      4      1    1.2320e+02    5.6400e+02 ;     CA - C      - O     
+     2      3      9      1    1.1464e+02    3.8158e+02 ;     CA - C      - H     
+     3      2      7      1    1.0822e+02    3.9330e+02 ;      C - CA     - HA1   
+     3      2      8      1    1.0822e+02    3.9330e+02 ;      C - CA     - HA2   
+     4      3      9      1    1.2070e+02    4.5355e+02 ;      O - C      - H     
+     5      1      6      1    1.0640e+02    3.4644e+02 ;     H1 - N      - H2    
+     7      2      8      1    1.0846e+02    3.2803e+02 ;    HA1 - CA     - HA2   
+
+[ dihedrals ] ; propers
+; for gromacs 4.5 or higher, using funct 9
+;    i      j      k      l   func   phase     kd      pn
+     1      2      3      4      9   180.00   0.00000   2 ;      N-    CA-     C-     O
+     1      2      3      9      9   180.00   0.00000   2 ;      N-    CA-     C-     H
+     4      3      2      7      9     0.00   0.00000   0 ;      O-     C-    CA-   HA1
+     4      3      2      7      9     0.00   3.34720   1 ;      O-     C-    CA-   HA1
+     4      3      2      7      9   180.00   0.33472   3 ;      O-     C-    CA-   HA1
+     4      3      2      8      9     0.00   0.00000   0 ;      O-     C-    CA-   HA2
+     4      3      2      8      9     0.00   3.34720   1 ;      O-     C-    CA-   HA2
+     4      3      2      8      9   180.00   0.33472   3 ;      O-     C-    CA-   HA2
+     5      1      2      3      9     0.00   1.25520   3 ;     H1-     N-    CA-     C
+     5      1      2      7      9     0.00   1.25520   3 ;     H1-     N-    CA-   HA1
+     5      1      2      8      9     0.00   1.25520   3 ;     H1-     N-    CA-   HA2
+     6      1      2      3      9     0.00   1.25520   3 ;     H2-     N-    CA-     C
+     6      1      2      7      9     0.00   1.25520   3 ;     H2-     N-    CA-   HA1
+     6      1      2      8      9     0.00   1.25520   3 ;     H2-     N-    CA-   HA2
+     7      2      3      9      9   180.00   0.00000   2 ;    HA1-    CA-     C-     H
+     8      2      3      9      9   180.00   0.00000   2 ;    HA2-    CA-     C-     H
+
+[ dihedrals ] ; impropers
+; treated as propers in GROMACS to use correct AMBER analytical function
+;    i      j      k      l   func   phase     kd      pn
+     2      9      3      4      4   180.00   4.60240   2 ;     CA-     H-     C-     O

@@ -1,0 +1,6 @@
+# Model Performance Metrics
+
+* R2: 0.4727
+* MSE: 0.9319
+* MAE: 0.6702
+* RMSE: 0.9654

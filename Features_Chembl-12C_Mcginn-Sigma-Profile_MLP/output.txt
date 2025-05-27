@@ -1,0 +1,11 @@
+Training Metrics:
+MAE: 0.2570
+MSE: 0.1192
+RMSE: 0.3452
+R^2: 0.9367
+
+Test Metrics:
+MAE: 0.4962
+MSE: 0.5412
+RMSE: 0.7357
+R^2: 0.7309

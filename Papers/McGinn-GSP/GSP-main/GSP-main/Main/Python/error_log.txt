@@ -1,0 +1,771 @@
+2025-01-30 19:20:52,577 - __main__ - ERROR - Error processing row 373 (9f285b8f): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-01-30 19:20:56,101 - __main__ - ERROR - Error processing row 404 (2d0c8052): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-01-30 19:21:12,132 - __main__ - ERROR - Error processing row 540 (eaff50c4): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-01-30 19:21:14,936 - __main__ - ERROR - Error processing row 562 (f641ed7e): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:21:14,959 - __main__ - ERROR - Error processing row 563 (f641ed7e): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:21:14,980 - __main__ - ERROR - Error processing row 564 (5da254ca): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:21:14,999 - __main__ - ERROR - Error processing row 565 (5da254ca): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:22:10,196 - __main__ - ERROR - Error processing row 985 (10ff333d): Unsupported atom type: 58
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 58
+2025-01-30 19:22:10,225 - __main__ - ERROR - Error processing row 986 (358dd03c): Unsupported atom type: 58
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 58
+2025-01-30 19:22:12,649 - __main__ - ERROR - Error processing row 990 (00382588): Failed to generate 3D conformation
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 167, in main
+    mol = process_molecule(row['SMILES'])
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 108, in process_molecule
+    raise RuntimeError("Failed to generate 3D conformation")
+RuntimeError: Failed to generate 3D conformation
+2025-01-30 19:22:27,172 - __main__ - ERROR - Error processing row 1085 (31d3b204): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:22:27,184 - __main__ - ERROR - Error processing row 1086 (afa38e3a): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:22:27,192 - __main__ - ERROR - Error processing row 1087 (0d2a6d2f): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:22:55,152 - __main__ - ERROR - Error processing row 1297 (a65f76e6): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-01-30 19:22:55,426 - __main__ - ERROR - Error processing row 1299 (cd20433e): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-01-30 19:22:55,448 - __main__ - ERROR - Error processing row 1300 (415b4e91): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:22:55,587 - __main__ - ERROR - Error processing row 1301 (dbcaba38): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:22:55,959 - __main__ - ERROR - Error processing row 1304 (08828926): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:22:56,038 - __main__ - ERROR - Error processing row 1305 (438307dc): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-01-30 19:22:56,242 - __main__ - ERROR - Error processing row 1306 (b7e02222): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-01-30 19:22:56,329 - __main__ - ERROR - Error processing row 1307 (05f81069): Unsupported atom type: 58
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 58
+2025-01-30 19:23:25,598 - __main__ - ERROR - Error processing row 1508 (432bf694): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:25,684 - __main__ - ERROR - Error processing row 1509 (a1292558): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:25,792 - __main__ - ERROR - Error processing row 1510 (dd830eda): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:31,537 - __main__ - ERROR - Error processing row 1563 (b0b49d7a): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:31,614 - __main__ - ERROR - Error processing row 1564 (dd5ca1db): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:31,672 - __main__ - ERROR - Error processing row 1565 (39d324c8): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:35,826 - __main__ - ERROR - Error processing row 1594 (83c1f238): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:35,906 - __main__ - ERROR - Error processing row 1595 (b4b85595): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:35,980 - __main__ - ERROR - Error processing row 1596 (305c25d3): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:36,031 - __main__ - ERROR - Error processing row 1597 (670efcaa): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:36,059 - __main__ - ERROR - Error processing row 1598 (55daf6d7): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:36,085 - __main__ - ERROR - Error processing row 1599 (bb94aedb): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:42,829 - __main__ - ERROR - Error processing row 1657 (36b3ac0d): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:43,457 - __main__ - ERROR - Error processing row 1663 (01c7aeff): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:44,775 - __main__ - ERROR - Error processing row 1674 (67a246e5): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:44,900 - __main__ - ERROR - Error processing row 1675 (85c82884): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:47,977 - __main__ - ERROR - Error processing row 1693 (b84880ec): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:48,057 - __main__ - ERROR - Error processing row 1694 (4b797a5a): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:48,249 - __main__ - ERROR - Error processing row 1696 (406d32ce): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:53,252 - __main__ - ERROR - Error processing row 1727 (ab98421a): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:53,330 - __main__ - ERROR - Error processing row 1728 (865fe6e3): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:56,013 - __main__ - ERROR - Error processing row 1745 (f8f3c759): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:56,096 - __main__ - ERROR - Error processing row 1746 (6310a3b8): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:56,177 - __main__ - ERROR - Error processing row 1747 (4afb5624): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:23:56,213 - __main__ - ERROR - Error processing row 1748 (261c7549): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-01-30 19:24:01,134 - __main__ - ERROR - Error processing row 1790 (2714c554): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:24:01,197 - __main__ - ERROR - Error processing row 1791 (33541bfd): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:24:01,257 - __main__ - ERROR - Error processing row 1792 (73fdcff0): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:24:01,290 - __main__ - ERROR - Error processing row 1793 (0c089c2c): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-01-30 19:24:44,593 - __main__ - ERROR - Error processing row 2038 (a51cf56c): Failed to generate 3D conformation
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 167, in main
+    mol = process_molecule(row['SMILES'])
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 108, in process_molecule
+    raise RuntimeError("Failed to generate 3D conformation")
+RuntimeError: Failed to generate 3D conformation
+2025-01-30 19:24:59,801 - __main__ - ERROR - Error processing row 2168 (0c58be0e): Unsupported atom type: 69
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 69
+2025-01-30 19:24:59,801 - __main__ - ERROR - Error processing row 2169 (965e106f): Unsupported atom type: 69
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 69
+2025-01-30 19:24:59,817 - __main__ - ERROR - Error processing row 2170 (fae611bd): Unsupported atom type: 69
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 69
+2025-02-01 22:53:48,110 - __main__ - ERROR - Error processing row 0 (cd20433e): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-02-01 22:53:55,185 - __main__ - ERROR - Error processing row 47 (9f285b8f): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-02-01 22:54:17,494 - __main__ - ERROR - Error processing row 0 (cd20433e): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-02-01 22:54:23,742 - __main__ - ERROR - Error processing row 47 (9f285b8f): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-02-01 22:55:00,840 - __main__ - ERROR - Error processing row 322 (415b4e91): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:55:05,301 - __main__ - ERROR - Error processing row 353 (eaff50c4): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-02-01 22:55:21,461 - __main__ - ERROR - Error processing row 464 (358dd03c): Unsupported atom type: 58
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 58
+2025-02-01 22:55:21,487 - __main__ - ERROR - Error processing row 465 (10ff333d): Unsupported atom type: 58
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 58
+2025-02-01 22:55:30,863 - __main__ - ERROR - Error processing row 515 (00382588): Failed to generate 3D conformation
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 167, in main
+    mol = process_molecule(row['SMILES'])
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 108, in process_molecule
+    raise RuntimeError("Failed to generate 3D conformation")
+RuntimeError: Failed to generate 3D conformation
+2025-02-01 22:55:32,762 - __main__ - ERROR - Error processing row 523 (a65f76e6): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-02-01 22:55:33,142 - __main__ - ERROR - Error processing row 526 (08828926): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:55:36,380 - __main__ - ERROR - Error processing row 546 (ab98421a): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:41,790 - __main__ - ERROR - Error processing row 554 (a51cf56c): Failed to generate 3D conformation
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 167, in main
+    mol = process_molecule(row['SMILES'])
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 108, in process_molecule
+    raise RuntimeError("Failed to generate 3D conformation")
+RuntimeError: Failed to generate 3D conformation
+2025-02-01 22:55:42,806 - __main__ - ERROR - Error processing row 561 (33541bfd): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:55:46,014 - __main__ - ERROR - Error processing row 580 (01c7aeff): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:51,375 - __main__ - ERROR - Error processing row 602 (0c089c2c): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:55:52,905 - __main__ - ERROR - Error processing row 612 (406d32ce): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:52,962 - __main__ - ERROR - Error processing row 613 (261c7549): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:55,281 - __main__ - ERROR - Error processing row 626 (2714c554): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:55:55,347 - __main__ - ERROR - Error processing row 627 (73fdcff0): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:55:56,069 - __main__ - ERROR - Error processing row 632 (b84880ec): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:56,137 - __main__ - ERROR - Error processing row 633 (dd5ca1db): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:56,204 - __main__ - ERROR - Error processing row 634 (39d324c8): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:58,150 - __main__ - ERROR - Error processing row 646 (4b797a5a): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:58,235 - __main__ - ERROR - Error processing row 647 (6310a3b8): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:58,286 - __main__ - ERROR - Error processing row 648 (4afb5624): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:55:58,887 - __main__ - ERROR - Error processing row 652 (05f81069): Unsupported atom type: 58
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 58
+2025-02-01 22:56:00,397 - __main__ - ERROR - Error processing row 661 (865fe6e3): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:01,105 - __main__ - ERROR - Error processing row 665 (b4b85595): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:01,180 - __main__ - ERROR - Error processing row 666 (bb94aedb): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:01,483 - __main__ - ERROR - Error processing row 668 (85c82884): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:01,547 - __main__ - ERROR - Error processing row 669 (36b3ac0d): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:01,596 - __main__ - ERROR - Error processing row 670 (dd830eda): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:03,012 - __main__ - ERROR - Error processing row 678 (438307dc): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-02-01 22:56:03,496 - __main__ - ERROR - Error processing row 681 (670efcaa): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:03,802 - __main__ - ERROR - Error processing row 683 (55daf6d7): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:03,873 - __main__ - ERROR - Error processing row 684 (305c25d3): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:03,908 - __main__ - ERROR - Error processing row 685 (67a246e5): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:03,989 - __main__ - ERROR - Error processing row 686 (432bf694): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:05,101 - __main__ - ERROR - Error processing row 692 (83c1f238): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:05,190 - __main__ - ERROR - Error processing row 693 (f8f3c759): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:05,255 - __main__ - ERROR - Error processing row 694 (a1292558): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:06,966 - __main__ - ERROR - Error processing row 702 (b0b49d7a): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:56:08,829 - __main__ - ERROR - Error processing row 710 (b7e02222): Unsupported atom type: 51
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 51
+2025-02-01 22:56:08,941 - __main__ - ERROR - Error processing row 711 (dbcaba38): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:56:21,718 - __main__ - ERROR - Error processing row 815 (0c58be0e): Unsupported atom type: 69
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 69
+2025-02-01 22:56:30,369 - __main__ - ERROR - Error processing row 884 (18496830): Failed to generate 3D conformation
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 167, in main
+    mol = process_molecule(row['SMILES'])
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 108, in process_molecule
+    raise RuntimeError("Failed to generate 3D conformation")
+RuntimeError: Failed to generate 3D conformation
+2025-02-01 22:57:00,688 - __main__ - ERROR - Error processing row 1139 (0d2a6d2f): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:57:00,698 - __main__ - ERROR - Error processing row 1140 (afa38e3a): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:57:00,707 - __main__ - ERROR - Error processing row 1141 (31d3b204): Molecule not compatible with MMFF force field
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 117, in create_graph_features
+    raise ValueError("Molecule not compatible with MMFF force field")
+ValueError: Molecule not compatible with MMFF force field
+2025-02-01 22:57:02,732 - __main__ - ERROR - Error processing row 1159 (965e106f): Unsupported atom type: 69
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 69
+2025-02-01 22:57:31,334 - __main__ - ERROR - Error processing row 1394 (2d0c8052): Unsupported atom type: 46
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 46
+2025-02-01 22:58:09,069 - __main__ - ERROR - Error processing row 1690 (fae611bd): Unsupported atom type: 69
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 69
+2025-02-01 22:58:12,613 - __main__ - ERROR - Error processing row 1718 (f641ed7e): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-02-01 22:58:12,627 - __main__ - ERROR - Error processing row 1719 (5da254ca): Unsupported atom type: 34
+Traceback (most recent call last):
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 170, in main
+    x, adj, y = create_graph_features(mol)
+  File "C:\Users\kamal\OneDrive - University of Guelph\My Research\data1_ML_GSP_from_IuPac\GSP-main\GSP-main\Main\Python\IuPac_Iteration_v2.py", line 125, in create_graph_features
+    raise ValueError(f"Unsupported atom type: {a_type}")
+ValueError: Unsupported atom type: 34
+2025-04-18 16:27:05,294 - __main__ - ERROR - Error processing row 4255 (NC1C2C3CC4C2C2C1C3C42): Failed to generate 3D conformation
+Traceback (most recent call last):
+  File "c:/Users/kamal/OneDrive - University of Guelph/My Research/data1_ML_GSP_from_IuPac/GSP-main/GSP-main/Main/Python/Chembl_12C_Iteration.py", line 135, in main
+    mol = process_molecule(row['Smiles'])
+  File "c:/Users/kamal/OneDrive - University of Guelph/My Research/data1_ML_GSP_from_IuPac/GSP-main/GSP-main/Main/Python/Chembl_12C_Iteration.py", line 99, in process_molecule
+    raise RuntimeError("Failed to generate 3D conformation")
+RuntimeError: Failed to generate 3D conformation
+2025-04-18 16:30:15,130 - __main__ - INFO - Saved updated DataFrame with sigma profiles to C:\\Users\\kamal\\OneDrive - University of Guelph\\My Research\\data3_12C_Chembl_Benson_Groups_Sigma_Profile\\Amines_12C_CHEMBL_with_sigma.xlsx

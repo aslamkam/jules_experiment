@@ -1,0 +1,24 @@
+"c:/Users/kamal/OneDrive - University of Guelph/My Research/Features_Chembl-12C_AM1BCC-Partial-Charges_Benson-Groups_Mcginn-Sigma-Profile_GCN-MLP/training.py"
+Loaded 5773 samples.
+Epoch 10: Val MAE=0.780, RMSE=0.981, R2=0.495
+Epoch 20: Val MAE=0.526, RMSE=0.718, R2=0.730
+Epoch 30: Val MAE=0.527, RMSE=0.712, R2=0.734
+Epoch 40: Val MAE=0.501, RMSE=0.719, R2=0.729
+Epoch 50: Val MAE=0.455, RMSE=0.634, R2=0.789
+Epoch 60: Val MAE=0.418, RMSE=0.588, R2=0.819
+Epoch 70: Val MAE=0.501, RMSE=0.664, R2=0.769
+Epoch 80: Val MAE=0.612, RMSE=0.787, R2=0.675
+Epoch 90: Val MAE=0.409, RMSE=0.568, R2=0.831
+Epoch 100: Val MAE=0.436, RMSE=0.610, R2=0.805
+Final metrics:
+MAE: 0.436
+MSE: 0.372
+RMSE: 0.610
+R2: 0.805
+Max Abs Error: 5.209
+%|Err|<=0.2: 31.775
+%Err(0,0.2]: 12.554
+%Err(-0.2,0): 19.221
+%|Err|<=0.4: 59.307
+%Err(0,0.4]: 18.961
+%Err(-0.4,0): 40.346

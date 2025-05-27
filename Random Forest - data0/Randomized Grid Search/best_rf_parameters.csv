@@ -1,0 +1,2 @@
+bootstrap,max_depth,max_features,min_samples_leaf,min_samples_split,n_estimators
+True,94,sqrt,1,5,972

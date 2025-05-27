@@ -1,0 +1,23 @@
+Loaded 5773 samples.
+Epoch 10: Val MAE=0.617, RMSE=0.853, R2=0.659
+Epoch 20: Val MAE=0.643, RMSE=0.887, R2=0.630
+Epoch 30: Val MAE=0.515, RMSE=0.734, R2=0.747
+Epoch 40: Val MAE=0.503, RMSE=0.699, R2=0.771
+Epoch 50: Val MAE=0.477, RMSE=0.646, R2=0.804
+Epoch 60: Val MAE=0.518, RMSE=0.679, R2=0.784
+Epoch 70: Val MAE=0.429, RMSE=0.603, R2=0.829
+Epoch 80: Val MAE=0.487, RMSE=0.652, R2=0.801
+Epoch 90: Val MAE=0.378, RMSE=0.580, R2=0.842
+Epoch 100: Val MAE=0.374, RMSE=0.559, R2=0.853
+Final metrics:
+MAE: 0.374
+MSE: 0.312
+RMSE: 0.559
+R2: 0.853
+Max Abs Error: 5.443
+%|Err|<=0.2: 38.615
+%Err(0,0.2]: 19.740
+%Err(-0.2,0): 18.874
+%|Err|<=0.4: 67.532
+%Err(0,0.4]: 35.152
+%Err(-0.4,0): 32.381

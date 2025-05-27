@@ -1,0 +1,18 @@
+Bootstrap: docker
+From: reactionmechanismgenerator/rmg:3.2.0
+
+%post
+    apt-get update && apt-get install -y python3-pip
+    pip3 install pandas
+    pip3 install tqdm
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export PYTHONPATH=/RMG-Py:$PYTHONPATH
+
+%labels
+    Maintainer kaslam
+    Version with-pandas
+
+%help
+    This container includes RMG and pandas installed via pip.
