@@ -165,15 +165,22 @@ def run_epoch(loader, training=False):
     return preds, targets, total_loss / len(loader.dataset)
 
 # 8. Training loop
-for epoch in range(1, 2):  # CRITICAL: Run for 1 epoch (range(1,2) means epoch will be 1)
+# User should set the total number of epochs to run here:
+total_epochs = 1 # Set to 1 for current testing, user can change this to 501 or other values.
+# The loop will run from epoch 1 up to and including total_epochs.
+for epoch in range(1, total_epochs + 1):
     run_epoch(train_loader, training=True)
-    # Print validation metrics for the single epoch
-    p_val, t_val, loss_val = run_epoch(val_loader, training=False) # Renamed _ to loss_val for clarity
+    
+    # Calculate validation metrics for each epoch
+    p_val, t_val, loss_val = run_epoch(val_loader, training=False)
     mae = mean_absolute_error(t_val, p_val)
     mse = mean_squared_error(t_val, p_val)
     rmse = mse ** 0.5
     r2 = r2_score(t_val, p_val)
-    print(f"Epoch {epoch}: Val MAE={mae:.3f}, RMSE={rmse:.3f}, R2={r2:.3f}, Val Loss={loss_val:.3f}")
+    
+    # Print validation metrics if it's the 10th epoch or the last epoch
+    if epoch % 10 == 0 or epoch == total_epochs:
+        print(f"Epoch {epoch}/{total_epochs}: Val MAE={mae:.3f}, RMSE={rmse:.3f}, R2={r2:.3f}, Val Loss={loss_val:.3f}")
 
 # 9. Final evaluation with extended metrics
 p_val, t_val, _ = run_epoch(val_loader, training=False)
@@ -223,6 +230,13 @@ script_dir_for_plots = os.path.dirname(os.path.abspath(__file__))
 # Save Validation Plots
 plt.figure()
 plt.scatter(t_val, p_val)
+# Add y=x line for validation plot
+all_val_data = t_val + p_val # Combine true and predicted values
+if all_val_data: # Ensure there's data
+    min_val = min(all_val_data)
+    max_val = max(all_val_data)
+    plt.plot([min_val, max_val], [min_val, max_val], 'k--', lw=2, label='y=x')
+    plt.legend() # Add legend to show label for y=x line
 plt.xlabel('True pKa')
 plt.ylabel('Predicted pKa')
 plt.title('Validation: Predicted vs True pKa')
@@ -240,6 +254,13 @@ plt.close()
 # Save Test Plots
 plt.figure()
 plt.scatter(t_test, p_test)
+# Add y=x line for test plot
+all_test_data = t_test + p_test # Combine true and predicted values
+if all_test_data: # Ensure there's data
+    min_val_test = min(all_test_data)
+    max_val_test = max(all_test_data)
+    plt.plot([min_val_test, max_val_test], [min_val_test, max_val_test], 'k--', lw=2, label='y=x')
+    plt.legend() # Add legend to show label for y=x line
 plt.xlabel('True pKa')
 plt.ylabel('Predicted pKa')
 plt.title('Test: Predicted vs True pKa')
