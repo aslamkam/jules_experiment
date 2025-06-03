@@ -1,0 +1,17 @@
+Outputting to: /app/XGBoost - data3/output.txt
+
+--- ERROR DURING EXECUTION ---
+Traceback (most recent call last):
+  File "/app/XGBoost - data3/XGBoost.py", line 169, in <module>
+    main() # Call the main function where all operations and prints happen
+  File "/app/XGBoost - data3/XGBoost.py", line 34, in main
+    df = pd.read_excel(data_file)
+  File "/home/swebot/.local/lib/python3.10/site-packages/pandas/io/excel/_base.py", line 495, in read_excel
+    io = ExcelFile(
+  File "/home/swebot/.local/lib/python3.10/site-packages/pandas/io/excel/_base.py", line 1550, in __init__
+    ext = inspect_excel_format(
+  File "/home/swebot/.local/lib/python3.10/site-packages/pandas/io/excel/_base.py", line 1402, in inspect_excel_format
+    with get_handle(
+  File "/home/swebot/.local/lib/python3.10/site-packages/pandas/io/common.py", line 882, in get_handle
+    handle = open(handle, ioargs.mode)
+FileNotFoundError: [Errno 2] No such file or directory: '../data3_12C_Chembl_Benson_Groups_Sigma_Profile/Amines_12C_CHEMBL_with_sigma_cleaned.xlsx'
