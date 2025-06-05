@@ -19,52 +19,122 @@ from rdkit.Chem import rdchem
 # Data Loading and Preprocessing
 # -------------------------------
 
-def load_sigma_profile(file_path):
-    """Load sigma profile from file."""
-    try:
-        profile_data = pd.read_csv(file_path, sep='\t', header=None)
-        # Return only the sigma values (i.e., column index 1)
-        return profile_data[1].values
-    except Exception as e:
-        print(f"Error loading {file_path}: {str(e)}")
-        return None
-
-def preprocess_data(dataset_path, sigma_profiles_path):
-    """Load and preprocess dataset and sigma profile files."""
+def preprocess_data(new_dataset_path, new_sigma_profile_csv_path):
+    """Load and preprocess dataset and sigma profile CSV files."""
     # Load amines dataset
-    amines_df = pd.read_csv(dataset_path)
-    # Keep only the columns used in the RandomForests file
-    columns_to_keep = ['ID', 'pka_value', 'formula', 'amine_class', 'smiles']
-    amines_df = amines_df[columns_to_keep]
-    
-    # Aggregate sigma profiles using the 'ID' column.
-    sigma_profiles = []
-    ids_with_profiles = []
-    for molecule_id in amines_df['ID']:
-        # Use the same file naming format as in the RandomForests file.
-        file_path = os.path.join(sigma_profiles_path, f'{int(molecule_id):06d}.txt')
-        sigma_profile = load_sigma_profile(file_path)
-        if sigma_profile is not None and np.all(np.isfinite(sigma_profile)):
-            sigma_profiles.append(sigma_profile)
-            ids_with_profiles.append(molecule_id)
-    
-    if len(sigma_profiles) == 0:
-        raise ValueError("No valid sigma profiles were loaded.")
-    
-    # Create a dataframe for sigma profiles
-    sigma_profiles_array = np.array(sigma_profiles)
-    column_names = [f'sigma_value_{i}' for i in range(sigma_profiles_array.shape[1])]
-    sigma_profiles_df = pd.DataFrame(sigma_profiles_array.astype(np.float32), columns=column_names)
-    sigma_profiles_df['ID'] = ids_with_profiles
+    amines_df_full = pd.read_csv(new_dataset_path)
+    # Keep only the necessary columns, including 'Inchi Key' for merging
+    # and original feature names before they are renamed later.
+    columns_to_keep = ['Inchi Key', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'Smiles']
+    if not all(col in amines_df_full.columns for col in columns_to_keep):
+        # Attempt to find columns by case-insensitive matching for flexibility
+        available_cols_lower = {col.lower(): col for col in amines_df_full.columns}
+        actual_cols_to_keep = []
+        missing_cols = []
+        for col_k in columns_to_keep:
+            if col_k.lower() in available_cols_lower:
+                actual_cols_to_keep.append(available_cols_lower[col_k.lower()])
+            else:
+                missing_cols.append(col_k)
+        if missing_cols:
+            raise ValueError(f"Dataset CSV at {new_dataset_path} is missing one of the required columns: {missing_cols}. Available columns: {amines_df_full.columns.tolist()}")
+        amines_df = amines_df_full[actual_cols_to_keep].copy()
+        # Rename to standard casing for consistency within this function
+        rename_map = {actual: desired for actual, desired in zip(actual_cols_to_keep, columns_to_keep)}
+        amines_df.rename(columns=rename_map, inplace=True)
+    else:
+        amines_df = amines_df_full[columns_to_keep].copy()
 
-    # Merge the sigma profile data with the amines dataset (using 'ID' as the key)
-    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ID')
-    merged_df = merged_df.replace([np.inf, -np.inf], np.nan).dropna()
 
-    # Rename the 'smiles' column to 'SMILES' for compatibility with the graph generation functions.
-    merged_df.rename(columns={'smiles': 'SMILES'}, inplace=True)
+    # Load sigma profile CSV
+    sigma_source_df_full = pd.read_csv(new_sigma_profile_csv_path)
+    # Case-insensitive check for 'Inchi Key' and 'Sigma Profile'
+    inchi_key_col_sigma = next((col for col in sigma_source_df_full.columns if col.lower() == 'inchi key'), None)
+    sigma_profile_col_sigma = next((col for col in sigma_source_df_full.columns if col.lower() == 'sigma profile'), None)
+
+    if not inchi_key_col_sigma or not sigma_profile_col_sigma:
+        raise ValueError(f"Sigma profile CSV at {new_sigma_profile_csv_path} is missing 'Inchi Key' or 'Sigma Profile' column. Available columns: {sigma_source_df_full.columns.tolist()}")
     
-    return merged_df, column_names
+    sigma_source_df = sigma_source_df_full[[inchi_key_col_sigma, sigma_profile_col_sigma]].copy()
+    # Rename to standard casing for consistency
+    sigma_source_df.rename(columns={inchi_key_col_sigma: 'Inchi Key', sigma_profile_col_sigma: 'Sigma Profile'}, inplace=True)
+
+
+    # Prepare Inchi Keys for merging (e.g., strip whitespace)
+    amines_df['Inchi Key'] = amines_df['Inchi Key'].astype(str).str.strip()
+    sigma_source_df['Inchi Key'] = sigma_source_df['Inchi Key'].astype(str).str.strip()
+
+    # Merge the two dataframes using 'Inchi Key'
+    merged_df_initial = pd.merge(amines_df, sigma_source_df, on='Inchi Key', how='inner')
+
+    parsed_sigma_profiles_list = []
+    valid_inchi_keys_for_final_df = []
+
+    if 'Sigma Profile' not in merged_df_initial.columns: # Should be present due to rename
+        raise ValueError("'Sigma Profile' column not found after merging. Check CSVs and merge logic.")
+
+    for index, row in merged_df_initial.iterrows():
+        sigma_str = row['Sigma Profile']
+        inchi_key = row['Inchi Key']
+
+        if pd.isna(sigma_str):
+            continue
+
+        try:
+            profile_values = [float(val) for val in str(sigma_str).split(';')]
+            if not np.all(np.isfinite(profile_values)):
+                continue
+            parsed_sigma_profiles_list.append(profile_values)
+            valid_inchi_keys_for_final_df.append(inchi_key)
+        except ValueError:
+            continue
+        except Exception:
+            continue
+
+    if not parsed_sigma_profiles_list:
+        raise ValueError("No valid sigma profiles were successfully parsed from the 'Sigma Profile' column.")
+
+    sigma_profiles_array = np.array(parsed_sigma_profiles_list, dtype=np.float32)
+    
+    num_sigma_features = sigma_profiles_array.shape[1]
+    sigma_feature_column_names = [f'sigma_value_{i}' for i in range(num_sigma_features)]
+
+    sigma_df_parsed = pd.DataFrame(sigma_profiles_array, columns=sigma_feature_column_names)
+    sigma_df_parsed['Inchi Key'] = valid_inchi_keys_for_final_df
+
+    merged_df_filtered = merged_df_initial[merged_df_initial['Inchi Key'].isin(valid_inchi_keys_for_final_df)].copy()
+    
+    # Ensure 'Inchi Key' in merged_df_filtered is also string for merging with sigma_df_parsed
+    merged_df_filtered['Inchi Key'] = merged_df_filtered['Inchi Key'].astype(str).str.strip()
+    sigma_df_parsed['Inchi Key'] = sigma_df_parsed['Inchi Key'].astype(str).str.strip()
+
+
+    merged_df_final = pd.merge(merged_df_filtered.drop(columns=['Sigma Profile']), sigma_df_parsed, on='Inchi Key', how='inner')
+
+    merged_df_final = merged_df_final.replace([np.inf, -np.inf], np.nan).dropna(subset=sigma_feature_column_names + ['CX Basic pKa'])
+
+
+    if 'Smiles' in merged_df_final.columns:
+        merged_df_final.rename(columns={'Smiles': 'SMILES'}, inplace=True)
+    elif 'smiles' in merged_df_final.columns: # if it was renamed from actual_cols_to_keep
+        merged_df_final.rename(columns={'smiles': 'SMILES'}, inplace=True)
+    else:
+        raise ValueError("Column 'Smiles' (or 'smiles') not found in merged_df_final. Check input CSV column names.")
+
+    if 'CX Basic pKa' in merged_df_final.columns:
+        merged_df_final.rename(columns={'CX Basic pKa': 'pka_value'}, inplace=True)
+    elif 'cx basic pka' in {col.lower(): col for col in merged_df_final.columns}:
+        actual_pkacol_name = {col.lower(): col for col in merged_df_final.columns}['cx basic pka']
+        merged_df_final.rename(columns={actual_pkacol_name: 'pka_value'}, inplace=True)
+    elif 'pka_value' not in merged_df_final.columns: # Check if it's already named 'pka_value'
+             raise ValueError("Column 'CX Basic pKa' (or 'pka_value') not found in merged_df_final.")
+    
+    required_final_cols = ['SMILES', 'pka_value', 'Molecular Formula', 'Amine Class'] + sigma_feature_column_names
+    missing_final_cols = [col for col in required_final_cols if col not in merged_df_final.columns]
+    if missing_final_cols:
+        raise ValueError(f"Final merged DataFrame is missing columns: {missing_final_cols}. Available: {merged_df_final.columns.tolist()}")
+
+    return merged_df_final, sigma_feature_column_names
 
 # ------------------------------------
 # Molecular Graph Generation Functions
@@ -225,11 +295,15 @@ def evaluate(model, criterion, graph_batch, sigma_batch, targets, device):
 
 def main():
     # Update file paths to use the same files as in the RandomForests file.
-    dataset_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\available-amine-pka-dataset-full.csv'
-    sigma_profiles_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\SigmaProfileData/SigmaProfileData'
+    # dataset_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\available-amine-pka-dataset-full.csv'
+    # sigma_profiles_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\SigmaProfileData/SigmaProfileData'
     
     print("Loading and preprocessing data for Fusion Model...")
-    merged_df, sigma_columns = preprocess_data(dataset_path, sigma_profiles_path)
+    # The actual paths will be passed as arguments in a future step.
+    # For now, ensure preprocess_data can be called with two arguments.
+    # merged_df, sigma_columns = preprocess_data(dataset_path, sigma_profiles_path)
+    # Example of new call structure (actual arguments to be defined later):
+    merged_df, sigma_columns = preprocess_data("Features/Chembl-12C/ChEMBL_amines_12C.csv", "Features/Chembl-12C/Orca-Sigma-Profile/ChEMBL_amines_12C_with_sigma.csv")
     
     # Prepare graph data from SMILES.
     # Now using the renamed 'SMILES' column (converted from 'smiles').
@@ -280,7 +354,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
     criterion = nn.MSELoss()
     
-    num_epochs = 2200
+    num_epochs = 10
     train_losses = []
     test_losses = []
     
