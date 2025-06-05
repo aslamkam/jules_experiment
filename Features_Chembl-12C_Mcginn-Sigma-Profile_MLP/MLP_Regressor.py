@@ -66,10 +66,35 @@ def compute_metrics(y_true, y_pred):
     mse = mean_squared_error(y_true, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_true, y_pred)
-    return mae, mse, rmse, r2
 
-train_mae, train_mse, train_rmse, train_r2 = compute_metrics(y_train, y_train_pred)
-test_mae, test_mse, test_rmse, test_r2 = compute_metrics(y_test, y_test_pred)
+    # Extended metrics
+    errors = y_pred - y_true
+    abs_errors = np.abs(errors)
+
+    max_abs_error = np.max(abs_errors)
+
+    pct_err_le_02 = np.sum(abs_errors <= 0.2) / len(abs_errors) * 100
+    pct_err_0_02 = np.sum((errors > 0) & (errors <= 0.2)) / len(errors) * 100
+    pct_err_n02_0 = np.sum((errors < 0) & (errors >= -0.2)) / len(errors) * 100
+
+    pct_err_le_04 = np.sum(abs_errors <= 0.4) / len(abs_errors) * 100
+    pct_err_0_04 = np.sum((errors > 0) & (errors <= 0.4)) / len(errors) * 100
+    pct_err_n04_0 = np.sum((errors < 0) & (errors >= -0.4)) / len(errors) * 100
+
+    return (mae, mse, rmse, r2, max_abs_error,
+            pct_err_le_02, pct_err_0_02, pct_err_n02_0,
+            pct_err_le_04, pct_err_0_04, pct_err_n04_0)
+
+train_metrics = compute_metrics(y_train, y_train_pred)
+test_metrics = compute_metrics(y_test, y_test_pred)
+
+train_mae, train_mse, train_rmse, train_r2, train_max_abs_error, \
+train_pct_err_le_02, train_pct_err_0_02, train_pct_err_n02_0, \
+train_pct_err_le_04, train_pct_err_0_04, train_pct_err_n04_0 = train_metrics
+
+test_mae, test_mse, test_rmse, test_r2, test_max_abs_error, \
+test_pct_err_le_02, test_pct_err_0_02, test_pct_err_n02_0, \
+test_pct_err_le_04, test_pct_err_0_04, test_pct_err_n04_0 = test_metrics
 
 # Save metrics
 with open('output.txt', 'w') as f:
@@ -77,31 +102,82 @@ with open('output.txt', 'w') as f:
     f.write(f'MAE: {train_mae:.4f}\n')
     f.write(f'MSE: {train_mse:.4f}\n')
     f.write(f'RMSE: {train_rmse:.4f}\n')
-    f.write(f'R^2: {train_r2:.4f}\n\n')
+    f.write(f'R^2: {train_r2:.4f}\n')
+    f.write(f'Max Absolute Error: {train_max_abs_error:.4f}\n')
+    f.write(f'Percentage of absolute errors <= 0.2: {train_pct_err_le_02:.2f}%\n')
+    f.write(f'Percentage of errors between 0 and 0.2: {train_pct_err_0_02:.2f}%\n')
+    f.write(f'Percentage of errors between -0.2 and 0: {train_pct_err_n02_0:.2f}%\n')
+    f.write(f'Percentage of absolute errors <= 0.4: {train_pct_err_le_04:.2f}%\n')
+    f.write(f'Percentage of errors between 0 and 0.4: {train_pct_err_0_04:.2f}%\n')
+    f.write(f'Percentage of errors between -0.4 and 0: {train_pct_err_n04_0:.2f}%\n\n')
+
     f.write('Test Metrics:\n')
     f.write(f'MAE: {test_mae:.4f}\n')
     f.write(f'MSE: {test_mse:.4f}\n')
     f.write(f'RMSE: {test_rmse:.4f}\n')
     f.write(f'R^2: {test_r2:.4f}\n')
+    f.write(f'Max Absolute Error: {test_max_abs_error:.4f}\n')
+    f.write(f'Percentage of absolute errors <= 0.2: {test_pct_err_le_02:.2f}%\n')
+    f.write(f'Percentage of errors between 0 and 0.2: {test_pct_err_0_02:.2f}%\n')
+    f.write(f'Percentage of errors between -0.2 and 0: {test_pct_err_n02_0:.2f}%\n')
+    f.write(f'Percentage of absolute errors <= 0.4: {test_pct_err_le_04:.2f}%\n')
+    f.write(f'Percentage of errors between 0 and 0.4: {test_pct_err_0_04:.2f}%\n')
+    f.write(f'Percentage of errors between -0.4 and 0: {test_pct_err_n04_0:.2f}%\n')
+
+# Print metrics to console
+print("\n--- MLP Regressor Train Set Results ---")
+print(f"MAE: {train_mae:.4f}")
+print(f"MSE: {train_mse:.4f}")
+print(f"RMSE: {train_rmse:.4f}")
+print(f"R2: {train_r2:.4f}")
+print(f"Max Abs Error: {train_max_abs_error:.4f}")
+print(f"%|Err|<=0.2: {train_pct_err_le_02:.4f}")
+print(f"%Err(0,0.2]: {train_pct_err_0_02:.4f}")
+print(f"%Err(-0.2,0): {train_pct_err_n02_0:.4f}")
+print(f"%|Err|<=0.4: {train_pct_err_le_04:.4f}")
+print(f"%Err(0,0.4]: {train_pct_err_0_04:.4f}")
+print(f"%Err(-0.4,0): {train_pct_err_n04_0:.4f}\n")
+
+print("--- MLP Regressor Test Set Results ---")
+print(f"MAE: {test_mae:.4f}")
+print(f"MSE: {test_mse:.4f}")
+print(f"RMSE: {test_rmse:.4f}")
+print(f"R2: {test_r2:.4f}")
+print(f"Max Abs Error: {test_max_abs_error:.4f}")
+print(f"%|Err|<=0.2: {test_pct_err_le_02:.4f}")
+print(f"%Err(0,0.2]: {test_pct_err_0_02:.4f}")
+print(f"%Err(-0.2,0): {test_pct_err_n02_0:.4f}")
+print(f"%|Err|<=0.4: {test_pct_err_le_04:.4f}")
+print(f"%Err(0,0.4]: {test_pct_err_0_04:.4f}")
+print(f"%Err(-0.4,0): {test_pct_err_n04_0:.4f}\n")
 
 print("Best Parameters:", search.best_params_)
 print("Training and test metrics saved to output.txt")
 
 # Parity plots
-for split, (y_true, y_pred, fname, title) in zip(
+for split, (y_true, y_pred, fname, base_title) in zip(
     ['train', 'test'],
-    [(y_train, y_train_pred, 'parity_train.png', 'Training Set Parity Plot'),
-     (y_test, y_test_pred, 'parity_test.png', 'Test Set Parity Plot')]
+    [(y_train, y_train_pred, 'parity_train.png', 'Parity Plot (MLP Regressor on {} Set)'),
+     (y_test, y_test_pred, 'parity_test.png', 'Parity Plot (MLP Regressor on {} Set)')]
 ):
     plt.figure()
     plt.scatter(y_true, y_pred, alpha=0.6)
     min_val = min(y_true.min(), y_pred.min())
     max_val = max(y_true.max(), y_pred.max())
     plt.plot([min_val, max_val], [min_val, max_val], 'k--', lw=2)
-    plt.xlabel('True CX Basic pKa')
-    plt.ylabel('Predicted CX Basic pKa')
+
+    if split == 'train':
+        title = base_title.format('Train')
+        xlabel = 'True pKa (Train Set)'
+        ylabel = 'Predicted pKa (Train Set)'
+    else: # split == 'test'
+        title = base_title.format('Test')
+        xlabel = 'True pKa (Test Set)'
+        ylabel = 'Predicted pKa (Test Set)'
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title(title)
     plt.tight_layout()
     plt.savefig(fname, dpi=300)
-
-joblib.dump(best_model, 'best_mlp_model.joblib')
+    plt.show()
