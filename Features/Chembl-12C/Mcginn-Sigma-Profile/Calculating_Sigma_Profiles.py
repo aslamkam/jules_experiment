@@ -134,6 +134,9 @@ def main():
     # Read data copy
     df = pd.read_csv(copy_path)
     df["Sigma Profile"] = None
+    charge_values = np.linspace(-0.025, 0.025, 51)
+
+    sigma_profiles_output_dir = "./ChEMBL_12C_SigmaProfiles_Mcginn-5899"
 
     for idx, row in df.iterrows():
         try:
@@ -141,6 +144,24 @@ def main():
             x, adj, y = create_graph_features(mol)
             graph = Graph(x=x, a=adj, y=y)
             prediction = predict_sigma_profile(model, graph)[0].flatten()
+
+            # Ensure the output directory exists
+            os.makedirs(sigma_profiles_output_dir, exist_ok=True)
+
+            # Get InChI Key for filename
+            inchi_key = row['Inchi Key']
+            # It's good practice to sanitize filenames, though InChIKeys are generally safe.
+            # For this task, we'll assume they are safe.
+            filename = f"{inchi_key}.txt"
+
+            file_path = os.path.join(sigma_profiles_output_dir, filename)
+
+            # Combine charge values and sigma profile prediction
+            output_data = np.column_stack((charge_values, prediction))
+
+            # Write the combined data to the text file, space-delimited
+            np.savetxt(file_path, output_data, fmt='%s', delimiter=' ')
+
             df.at[idx, "Sigma Profile"] = prediction.tolist()
         except Exception as e:
             logger.error(f"Error at index {idx}, SMILES={row['Smiles']}: {e}")
