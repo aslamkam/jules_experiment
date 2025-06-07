@@ -124,15 +124,13 @@ def predict_sigma_profile(model: GCNModel, graph: Graph) -> np.ndarray:
 
 def main():
     # Input file and copy
-    original_path = r"C:\Users\kamal\Dropbox\0000-ML_Databases\ChEMBL Data (Do NOT Edit)\ChEMBL_amines_12C.csv"
-    copy_path = os.path.join(os.getcwd(), "ChEMBL_amines_12C_copy.csv")
-    shutil.copyfile(original_path, copy_path)
+    original_path = "../ChEMBL_amines_12C.csv"
 
     # Load model
     model = load_gcn_model()
 
     # Read data copy
-    df = pd.read_csv(copy_path)
+    df = pd.read_csv(original_path)
     df["Sigma Profile"] = None
     charge_values = np.linspace(-0.025, 0.025, 51)
 
