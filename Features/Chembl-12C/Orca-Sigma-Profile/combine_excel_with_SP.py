@@ -34,9 +34,9 @@ def populate_sigma_profile(file1_path, dir1_path, output_path=None):
 
 if __name__ == '__main__':
     # Paths (update as needed)
-    file1 = r"C:\Users\kamal\Dropbox\0000-ML_Databases\ChEMBL Data (Do NOT Edit)\ChEMBL_amines_12C.csv"
-    dir1 = r"C:\Users\kamal\Dropbox\0000-ML_Databases\ChEMBL_12C_SigmaProfiles_from_COSMO"
-    output_file = r"C:\Users\kamal\OneDrive - University of Guelph\My Research\Features-Chembl-12C\Computational-Sigma-Profile\ChEMBL_amines_12C_with_sigma.csv"
+    file1 = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\ChEMBL_amines_12C.csv"
+    dir1 = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\Orca-Sigma-Profile\ChEMBL_12C_SigmaProfiles_Orca-5899"
+    output_file = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\Orca-Sigma-Profile\ChEMBL_amines_12C_with_sigma.csv"
 
     updated_df, count = populate_sigma_profile(file1, dir1, output_file)
     print(f"Number of rows populated with Sigma Profile: {count}")
