@@ -135,12 +135,30 @@ def main():
     df = pd.read_csv(copy_path)
     df["Sigma Profile"] = None
 
+    sigma_profiles_output_dir = "./ChEMBL_12C_SigmaProfiles_Mcginn-5899"
+
     for idx, row in df.iterrows():
         try:
             mol = process_molecule(row['Smiles'])
             x, adj, y = create_graph_features(mol)
             graph = Graph(x=x, a=adj, y=y)
             prediction = predict_sigma_profile(model, graph)[0].flatten()
+
+            # Ensure the output directory exists
+            os.makedirs(sigma_profiles_output_dir, exist_ok=True)
+
+            # Get InChI Key for filename
+            inchi_key = row['Inchi Key']
+            # Replace any characters in InChI Key that are invalid for filenames, if any (though standard InChIKeys should be fine)
+            # For simplicity, we'll assume standard InChIKeys are filename-safe. If issues arise, this might need refinement.
+            # Add .txt extension
+            filename = f"{inchi_key}.txt"
+
+            file_path = os.path.join(sigma_profiles_output_dir, filename)
+
+            # Write the prediction to the text file
+            np.savetxt(file_path, prediction, fmt='%s')
+
             df.at[idx, "Sigma Profile"] = prediction.tolist()
         except Exception as e:
             logger.error(f"Error at index {idx}, SMILES={row['Smiles']}: {e}")
