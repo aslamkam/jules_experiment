@@ -134,6 +134,7 @@ def main():
     # Read data copy
     df = pd.read_csv(copy_path)
     df["Sigma Profile"] = None
+    charge_values = np.linspace(-0.025, 0.025, 51)
 
     sigma_profiles_output_dir = "./ChEMBL_12C_SigmaProfiles_Mcginn-5899"
 
@@ -149,15 +150,17 @@ def main():
 
             # Get InChI Key for filename
             inchi_key = row['Inchi Key']
-            # Replace any characters in InChI Key that are invalid for filenames, if any (though standard InChIKeys should be fine)
-            # For simplicity, we'll assume standard InChIKeys are filename-safe. If issues arise, this might need refinement.
-            # Add .txt extension
+            # It's good practice to sanitize filenames, though InChIKeys are generally safe.
+            # For this task, we'll assume they are safe.
             filename = f"{inchi_key}.txt"
 
             file_path = os.path.join(sigma_profiles_output_dir, filename)
 
-            # Write the prediction to the text file
-            np.savetxt(file_path, prediction, fmt='%s')
+            # Combine charge values and sigma profile prediction
+            output_data = np.column_stack((charge_values, prediction))
+
+            # Write the combined data to the text file, space-delimited
+            np.savetxt(file_path, output_data, fmt='%s', delimiter=' ')
 
             df.at[idx, "Sigma Profile"] = prediction.tolist()
         except Exception as e:
