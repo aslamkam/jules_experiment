@@ -9,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Load data
 file_path = r"C:\Users\kamal\OneDrive - University of Guelph\My Research\Features\Chembl-12C\Mcginn-Sigma-Profile\ChEMBL_amines_12C_with_sigma.csv"
-file_path = r"C:\Users\kaslam\OneDrive - University of Guelph\My Research\Features\Chembl-12C\Mcginn-Sigma-Profile\ChEMBL_amines_12C_with_sigma.csv"
+file_path = r"C:\Users\kamal\OneDrive - University of Guelph\My Research\Features\Chembl-12C\Mcginn-Sigma-Profile\ChEMBL_amines_12C_with_sigma.csv"
 df = pd.read_csv(file_path)
 
 # Parse Sigma Profile into numeric features
@@ -33,18 +33,18 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Unified MLP definition and param distribution
 mlp = MLPRegressor(max_iter=2000, random_state=42)
 param_dist = {
-    'hidden_layer_sizes': [(50,), (100,), (100,50), (50,25,10), (50,50), (100,100)],
+    'hidden_layer_sizes': [(100,50), (50,25,10), (50,50), (100,100)],
     'activation': ['relu', 'tanh'],
-    'solver': ['adam', 'lbfgs'],
-    'alpha': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-    'learning_rate': ['constant', 'adaptive'],
+    'solver': ['adam'],
+    'alpha': [1e-5, 1e-4, 1e-3, 1e-2],
+    'learning_rate': ['adaptive'],
     'learning_rate_init': [1e-3, 1e-2, 1e-1]
 }
 
 search = RandomizedSearchCV(
     mlp,
     param_dist,
-    n_iter=50,
+    n_iter=25,
     scoring='neg_mean_squared_error',
     cv=5,
     random_state=42,

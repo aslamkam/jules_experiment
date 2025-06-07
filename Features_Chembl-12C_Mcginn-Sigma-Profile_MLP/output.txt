@@ -1,11 +1,25 @@
 Training Metrics:
-MAE: 0.2570
-MSE: 0.1192
-RMSE: 0.3452
-R^2: 0.9367
+MAE: 0.1869
+MSE: 0.0627
+RMSE: 0.2503
+R^2: 0.9667
+Max Absolute Error: 1.8971
+Percentage of absolute errors <= 0.2: 63.97%
+Percentage of errors between 0 and 0.2: 30.24%
+Percentage of errors between -0.2 and 0: 33.73%
+Percentage of absolute errors <= 0.4: 89.74%
+Percentage of errors between 0 and 0.4: 41.73%
+Percentage of errors between -0.4 and 0: 48.01%
 
 Test Metrics:
-MAE: 0.4962
-MSE: 0.5412
-RMSE: 0.7357
-R^2: 0.7309
+MAE: 0.4658
+MSE: 0.4981
+RMSE: 0.7057
+R^2: 0.7523
+Max Absolute Error: 4.4420
+Percentage of absolute errors <= 0.2: 37.79%
+Percentage of errors between 0 and 0.2: 17.28%
+Percentage of errors between -0.2 and 0: 20.51%
+Percentage of absolute errors <= 0.4: 60.68%
+Percentage of errors between 0 and 0.4: 28.26%
+Percentage of errors between -0.4 and 0: 32.43%
