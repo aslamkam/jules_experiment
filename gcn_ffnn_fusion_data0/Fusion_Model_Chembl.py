@@ -34,19 +34,19 @@ def preprocess_data(dataset_path, sigma_profiles_path):
     # Load amines dataset
     amines_df = pd.read_csv(dataset_path)
     # Keep only the columns used in the RandomForests file
-    columns_to_keep = ['ID', 'pka_value', 'formula', 'amine_class', 'smiles']
+    columns_to_keep = ['ChEMBL ID', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'Smiles', 'Inchi Key']
     amines_df = amines_df[columns_to_keep]
     
     # Aggregate sigma profiles using the 'ID' column.
     sigma_profiles = []
     ids_with_profiles = []
-    for molecule_id in amines_df['ID']:
+    for molecule_chembl_id, inchi_key in amines_df[['ChEMBL ID', 'Inchi Key']].values:
         # Use the same file naming format as in the RandomForests file.
-        file_path = os.path.join(sigma_profiles_path, f'{int(molecule_id):06d}.txt')
+        file_path = os.path.join(sigma_profiles_path, f'{inchi_key}.txt')
         sigma_profile = load_sigma_profile(file_path)
         if sigma_profile is not None and np.all(np.isfinite(sigma_profile)):
             sigma_profiles.append(sigma_profile)
-            ids_with_profiles.append(molecule_id)
+            ids_with_profiles.append(molecule_chembl_id)
     
     if len(sigma_profiles) == 0:
         raise ValueError("No valid sigma profiles were loaded.")
@@ -55,14 +55,14 @@ def preprocess_data(dataset_path, sigma_profiles_path):
     sigma_profiles_array = np.array(sigma_profiles)
     column_names = [f'sigma_value_{i}' for i in range(sigma_profiles_array.shape[1])]
     sigma_profiles_df = pd.DataFrame(sigma_profiles_array.astype(np.float32), columns=column_names)
-    sigma_profiles_df['ID'] = ids_with_profiles
+    sigma_profiles_df['ChEMBL ID'] = ids_with_profiles
 
     # Merge the sigma profile data with the amines dataset (using 'ID' as the key)
-    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ID')
+    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ChEMBL ID')
     merged_df = merged_df.replace([np.inf, -np.inf], np.nan).dropna()
 
     # Rename the 'smiles' column to 'SMILES' for compatibility with the graph generation functions.
-    merged_df.rename(columns={'smiles': 'SMILES'}, inplace=True)
+    merged_df.rename(columns={'Smiles': 'SMILES'}, inplace=True)
     
     return merged_df, column_names
 
@@ -225,8 +225,8 @@ def evaluate(model, criterion, graph_batch, sigma_batch, targets, device):
 
 def main():
     # Update file paths to use the same files as in the RandomForests file.
-    dataset_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\available-amine-pka-dataset-full.csv'
-    sigma_profiles_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\SigmaProfileData/SigmaProfileData'
+    dataset_path = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\ChEMBL_amines_12C.csv"
+    sigma_profiles_path = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\Orca-Sigma-Profile\ChEMBL_12C_SigmaProfiles_Orca-5899"
     
     print("Loading and preprocessing data for Fusion Model...")
     merged_df, sigma_columns = preprocess_data(dataset_path, sigma_profiles_path)
@@ -240,7 +240,7 @@ def main():
         return
     
     # Filter targets and sigma profiles using valid indices.
-    y = merged_df['pka_value'].values[valid_indices]
+    y = merged_df['CX Basic pKa'].values[valid_indices]
     sigma_data = merged_df[sigma_columns].values[valid_indices]
     
     # Standardize sigma profile features.
@@ -280,7 +280,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
     criterion = nn.MSELoss()
     
-    num_epochs = 2200
+    num_epochs = 10
     train_losses = []
     test_losses = []
     
@@ -296,38 +296,92 @@ def main():
     # Calculate metrics on test set.
     model.eval()
     with torch.no_grad():
-        preds = model(test_graph_batch, sigma_test).cpu().numpy()
+        preds_tensor = model(test_graph_batch, sigma_test) # Get tensor output
+        preds = preds_tensor.cpu().numpy()
         y_true = y_test.cpu().numpy()
+
+    # Existing metrics
     mae = mean_absolute_error(y_true, preds)
     mse = mean_squared_error(y_true, preds)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_true, preds)
     
-    print("Evaluation Metrics for Fusion Model:")
+    print("\nEvaluation Metrics for Fusion Model (Test Set):") # Clarify this is for the test set
     print(f"MAE: {mae:.4f}")
     print(f"MSE: {mse:.4f}")
     print(f"RMSE: {rmse:.4f}")
     print(f"R^2: {r2:.4f}")
+
+    # Calculate additional metrics for the test set
+    errors_test = preds - y_true
+    abs_errors_test = np.abs(errors_test)
+
+    if len(abs_errors_test) > 0: # Ensure there are errors to calculate
+        max_abs_error_test = np.max(abs_errors_test)
+        pct_err_le_02_test = np.sum(abs_errors_test <= 0.2) / len(abs_errors_test) * 100
+        pct_err_gt0_le_02_test = np.sum((errors_test > 0) & (errors_test <= 0.2)) / len(errors_test) * 100
+        pct_err_gt_neg02_lt0_test = np.sum((errors_test > -0.2) & (errors_test < 0)) / len(errors_test) * 100
+        pct_err_le_04_test = np.sum(abs_errors_test <= 0.4) / len(abs_errors_test) * 100
+        pct_err_gt0_le_04_test = np.sum((errors_test > 0) & (errors_test <= 0.4)) / len(errors_test) * 100
+        pct_err_gt_neg04_lt0_test = np.sum((errors_test > -0.4) & (errors_test < 0)) / len(errors_test) * 100
+    else:
+        max_abs_error_test = 0.0
+        pct_err_le_02_test = 0.0
+        pct_err_gt0_le_02_test = 0.0
+        pct_err_gt_neg02_lt0_test = 0.0
+        pct_err_le_04_test = 0.0
+        pct_err_gt0_le_04_test = 0.0
+        pct_err_gt_neg04_lt0_test = 0.0
+
+    print(f"Max Abs Error (Test): {max_abs_error_test:.4f}")
+    print(f"% |Err|<=0.2 (Test): {pct_err_le_02_test:.3f}%")
+    print(f"% |Err|<=0.4 (Test): {pct_err_le_04_test:.3f}%")
+    print(f"% Err in (0,0.2] (Test): {pct_err_gt0_le_02_test:.3f}%")
+    print(f"% Err in (-0.2,0) (Test): {pct_err_gt_neg02_lt0_test:.3f}%")
+    print(f"% Err in (0,0.4] (Test): {pct_err_gt0_le_04_test:.3f}%")
+    print(f"% Err in (-0.4,0) (Test): {pct_err_gt_neg04_lt0_test:.3f}%")
+    # Optional detailed error percentages can be uncommented by the user if needed.
     
-    # Plot loss curves and true vs predicted scatter plot.
-    plt.figure(figsize=(12, 5))
-    plt.subplot(1, 2, 1)
+    # Plotting section
+    # Loss Curve Plot (Existing - uses validation loss for 'Test Loss' curve)
+    plt.figure(figsize=(18, 5)) # Adjusted for three subplots
+    plt.subplot(1, 3, 1)
     plt.plot(train_losses, label="Train Loss")
-    plt.plot(test_losses, label="Test Loss")
+    plt.plot(test_losses, label="Validation Loss per Epoch")
     plt.xlabel("Epoch")
     plt.ylabel("Loss (MSE)")
     plt.title("Loss Curve - Fusion Model")
     plt.legend()
+    plt.savefig("loss_curve_fusion_model.png") # Save loss curve
+    plt.close() # Close figure
 
-    plt.subplot(1, 2, 2)
+    # Test Set Parity Plot
+    plt.figure(figsize=(6, 5))
     plt.scatter(y_true, preds, alpha=0.6)
-    plt.xlabel("True pKa")
-    plt.ylabel("Predicted pKa")
-    plt.title("True vs Predicted pKa - Fusion Model")
-    plt.plot([min(y_true), max(y_true)], [min(y_true), max(y_true)], 'r--')
+    plt.xlabel("True pKa (Test Set)")
+    plt.ylabel("Predicted pKa (Test Set)")
+    plt.title("Test Set: True vs Predicted pKa")
+    if len(y_true) > 0 and len(preds) > 0:
+        min_val = min(np.min(y_true), np.min(preds))
+        max_val = max(np.max(y_true), np.max(preds))
+        plt.plot([min_val, max_val], [min_val, max_val], 'r--', label='y=x')
+        plt.legend()
+    plt.savefig("parity_plot_test_set_fusion_model.png")
+    plt.close() # Close figure
+
+    # Test Set Error Distribution Plot
+    plt.figure(figsize=(6, 5))
+    plt.hist(errors_test, bins=20)
+    plt.xlabel('Error (Predicted - True) on Test Set')
+    plt.ylabel('Count')
+    plt.title('Test Set: Error Distribution')
+    plt.savefig("error_dist_test_set_fusion_model.png")
+    plt.close() # Close figure
     
-    plt.tight_layout()
-    plt.show()
+    # Remove plt.show() as it's not needed for automated scripts and can cause issues.
+    # The existing plt.show() at the end of the original script should be removed or commented out.
+    # plt.tight_layout() # This can also be kept or removed, less critical than show()
+    # plt.show() # REMOVE OR COMMENT OUT THIS LINE
 
 if __name__ == "__main__":
     main()
