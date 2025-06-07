@@ -296,38 +296,92 @@ def main():
     # Calculate metrics on test set.
     model.eval()
     with torch.no_grad():
-        preds = model(test_graph_batch, sigma_test).cpu().numpy()
+        preds_tensor = model(test_graph_batch, sigma_test) # Get tensor output
+        preds = preds_tensor.cpu().numpy()
         y_true = y_test.cpu().numpy()
+
+    # Existing metrics
     mae = mean_absolute_error(y_true, preds)
     mse = mean_squared_error(y_true, preds)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_true, preds)
     
-    print("Evaluation Metrics for Fusion Model:")
+    print("\nEvaluation Metrics for Fusion Model (Test Set):") # Clarify this is for the test set
     print(f"MAE: {mae:.4f}")
     print(f"MSE: {mse:.4f}")
     print(f"RMSE: {rmse:.4f}")
     print(f"R^2: {r2:.4f}")
+
+    # Calculate additional metrics for the test set
+    errors_test = preds - y_true
+    abs_errors_test = np.abs(errors_test)
+
+    if len(abs_errors_test) > 0: # Ensure there are errors to calculate
+        max_abs_error_test = np.max(abs_errors_test)
+        pct_err_le_02_test = np.sum(abs_errors_test <= 0.2) / len(abs_errors_test) * 100
+        pct_err_gt0_le_02_test = np.sum((errors_test > 0) & (errors_test <= 0.2)) / len(errors_test) * 100
+        pct_err_gt_neg02_lt0_test = np.sum((errors_test > -0.2) & (errors_test < 0)) / len(errors_test) * 100
+        pct_err_le_04_test = np.sum(abs_errors_test <= 0.4) / len(abs_errors_test) * 100
+        pct_err_gt0_le_04_test = np.sum((errors_test > 0) & (errors_test <= 0.4)) / len(errors_test) * 100
+        pct_err_gt_neg04_lt0_test = np.sum((errors_test > -0.4) & (errors_test < 0)) / len(errors_test) * 100
+    else:
+        max_abs_error_test = 0.0
+        pct_err_le_02_test = 0.0
+        pct_err_gt0_le_02_test = 0.0
+        pct_err_gt_neg02_lt0_test = 0.0
+        pct_err_le_04_test = 0.0
+        pct_err_gt0_le_04_test = 0.0
+        pct_err_gt_neg04_lt0_test = 0.0
+
+    print(f"Max Abs Error (Test): {max_abs_error_test:.4f}")
+    print(f"% |Err|<=0.2 (Test): {pct_err_le_02_test:.3f}%")
+    print(f"% |Err|<=0.4 (Test): {pct_err_le_04_test:.3f}%")
+    print(f"% Err in (0,0.2] (Test): {pct_err_gt0_le_02_test:.3f}%")
+    print(f"% Err in (-0.2,0) (Test): {pct_err_gt_neg02_lt0_test:.3f}%")
+    print(f"% Err in (0,0.4] (Test): {pct_err_gt0_le_04_test:.3f}%")
+    print(f"% Err in (-0.4,0) (Test): {pct_err_gt_neg04_lt0_test:.3f}%")
+    # Optional detailed error percentages can be uncommented by the user if needed.
     
-    # Plot loss curves and true vs predicted scatter plot.
-    plt.figure(figsize=(12, 5))
-    plt.subplot(1, 2, 1)
+    # Plotting section
+    # Loss Curve Plot (Existing - uses validation loss for 'Test Loss' curve)
+    plt.figure(figsize=(18, 5)) # Adjusted for three subplots
+    plt.subplot(1, 3, 1)
     plt.plot(train_losses, label="Train Loss")
-    plt.plot(test_losses, label="Test Loss")
+    plt.plot(test_losses, label="Validation Loss per Epoch")
     plt.xlabel("Epoch")
     plt.ylabel("Loss (MSE)")
     plt.title("Loss Curve - Fusion Model")
     plt.legend()
+    plt.savefig("loss_curve_fusion_model.png") # Save loss curve
+    plt.close() # Close figure
 
-    plt.subplot(1, 2, 2)
+    # Test Set Parity Plot
+    plt.figure(figsize=(6, 5))
     plt.scatter(y_true, preds, alpha=0.6)
-    plt.xlabel("True pKa")
-    plt.ylabel("Predicted pKa")
-    plt.title("True vs Predicted pKa - Fusion Model")
-    plt.plot([min(y_true), max(y_true)], [min(y_true), max(y_true)], 'r--')
+    plt.xlabel("True pKa (Test Set)")
+    plt.ylabel("Predicted pKa (Test Set)")
+    plt.title("Test Set: True vs Predicted pKa")
+    if len(y_true) > 0 and len(preds) > 0:
+        min_val = min(np.min(y_true), np.min(preds))
+        max_val = max(np.max(y_true), np.max(preds))
+        plt.plot([min_val, max_val], [min_val, max_val], 'r--', label='y=x')
+        plt.legend()
+    plt.savefig("parity_plot_test_set_fusion_model.png")
+    plt.close() # Close figure
+
+    # Test Set Error Distribution Plot
+    plt.figure(figsize=(6, 5))
+    plt.hist(errors_test, bins=20)
+    plt.xlabel('Error (Predicted - True) on Test Set')
+    plt.ylabel('Count')
+    plt.title('Test Set: Error Distribution')
+    plt.savefig("error_dist_test_set_fusion_model.png")
+    plt.close() # Close figure
     
-    plt.tight_layout()
-    plt.show()
+    # Remove plt.show() as it's not needed for automated scripts and can cause issues.
+    # The existing plt.show() at the end of the original script should be removed or commented out.
+    # plt.tight_layout() # This can also be kept or removed, less critical than show()
+    # plt.show() # REMOVE OR COMMENT OUT THIS LINE
 
 if __name__ == "__main__":
     main()
