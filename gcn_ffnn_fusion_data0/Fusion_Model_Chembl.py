@@ -34,13 +34,13 @@ def preprocess_data(dataset_path, sigma_profiles_path):
     # Load amines dataset
     amines_df = pd.read_csv(dataset_path)
     # Keep only the columns used in the RandomForests file
-    columns_to_keep = ['ID', 'pka_value', 'formula', 'amine_class', 'smiles']
+    columns_to_keep = ['ChEMBL ID', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'Smiles']
     amines_df = amines_df[columns_to_keep]
     
     # Aggregate sigma profiles using the 'ID' column.
     sigma_profiles = []
     ids_with_profiles = []
-    for molecule_id in amines_df['ID']:
+    for molecule_id in amines_df['ChEMBL ID']:
         # Use the same file naming format as in the RandomForests file.
         file_path = os.path.join(sigma_profiles_path, f'{int(molecule_id):06d}.txt')
         sigma_profile = load_sigma_profile(file_path)
@@ -55,14 +55,14 @@ def preprocess_data(dataset_path, sigma_profiles_path):
     sigma_profiles_array = np.array(sigma_profiles)
     column_names = [f'sigma_value_{i}' for i in range(sigma_profiles_array.shape[1])]
     sigma_profiles_df = pd.DataFrame(sigma_profiles_array.astype(np.float32), columns=column_names)
-    sigma_profiles_df['ID'] = ids_with_profiles
+    sigma_profiles_df['ChEMBL ID'] = ids_with_profiles
 
     # Merge the sigma profile data with the amines dataset (using 'ID' as the key)
-    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ID')
+    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ChEMBL ID')
     merged_df = merged_df.replace([np.inf, -np.inf], np.nan).dropna()
 
     # Rename the 'smiles' column to 'SMILES' for compatibility with the graph generation functions.
-    merged_df.rename(columns={'smiles': 'SMILES'}, inplace=True)
+    merged_df.rename(columns={'Smiles': 'SMILES'}, inplace=True)
     
     return merged_df, column_names
 
@@ -240,7 +240,7 @@ def main():
         return
     
     # Filter targets and sigma profiles using valid indices.
-    y = merged_df['pka_value'].values[valid_indices]
+    y = merged_df['CX Basic pKa'].values[valid_indices]
     sigma_data = merged_df[sigma_columns].values[valid_indices]
     
     # Standardize sigma profile features.
