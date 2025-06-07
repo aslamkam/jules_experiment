@@ -34,19 +34,19 @@ def preprocess_data(dataset_path, sigma_profiles_path):
     # Load amines dataset
     amines_df = pd.read_csv(dataset_path)
     # Keep only the columns used in the RandomForests file
-    columns_to_keep = ['ChEMBL ID', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'Smiles']
+    columns_to_keep = ['ChEMBL ID', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'Smiles', 'Inchi Key']
     amines_df = amines_df[columns_to_keep]
     
     # Aggregate sigma profiles using the 'ID' column.
     sigma_profiles = []
     ids_with_profiles = []
-    for molecule_id in amines_df['ChEMBL ID']:
+    for molecule_chembl_id, inchi_key in amines_df[['ChEMBL ID', 'Inchi Key']].values:
         # Use the same file naming format as in the RandomForests file.
-        file_path = os.path.join(sigma_profiles_path, f'{int(molecule_id):06d}.txt')
+        file_path = os.path.join(sigma_profiles_path, f'{inchi_key}.txt')
         sigma_profile = load_sigma_profile(file_path)
         if sigma_profile is not None and np.all(np.isfinite(sigma_profile)):
             sigma_profiles.append(sigma_profile)
-            ids_with_profiles.append(molecule_id)
+            ids_with_profiles.append(molecule_chembl_id)
     
     if len(sigma_profiles) == 0:
         raise ValueError("No valid sigma profiles were loaded.")
