@@ -225,8 +225,8 @@ def evaluate(model, criterion, graph_batch, sigma_batch, targets, device):
 
 def main():
     # Update file paths to use the same files as in the RandomForests file.
-    dataset_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\available-amine-pka-dataset-full.csv'
-    sigma_profiles_path = r'C:\Users\kamal\OneDrive - University of Guelph\My Research\data0_Computational_SP_Chembl\SigmaProfileData/SigmaProfileData'
+    dataset_path = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\ChEMBL_amines_12C.csv"
+    sigma_profiles_path = r"C:\Users\kamal\jules_experiment\Features\Chembl-12C\Orca-Sigma-Profile\ChEMBL_12C_SigmaProfiles_Orca-5899"
     
     print("Loading and preprocessing data for Fusion Model...")
     merged_df, sigma_columns = preprocess_data(dataset_path, sigma_profiles_path)
@@ -280,7 +280,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
     criterion = nn.MSELoss()
     
-    num_epochs = 2200
+    num_epochs = 10
     train_losses = []
     test_losses = []
     
