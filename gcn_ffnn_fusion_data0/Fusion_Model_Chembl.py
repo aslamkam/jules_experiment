@@ -249,10 +249,30 @@ def main():
     scaler = StandardScaler()
     sigma_data_scaled = scaler.fit_transform(sigma_data)
     
-    # Create train/test split.
+    # Create train/validation/test split.
     indices = np.arange(len(y))
-    train_idx, test_idx = train_test_split(indices, test_size=0.2, random_state=42)
     
+    # First split: (train+validation) and test
+    # For example, 80% for train+validation, 20% for test
+    train_val_idx, test_idx = train_test_split(indices, test_size=0.2, random_state=42)
+
+    # Second split: train and validation from the (train+validation) set
+    # For example, 80% of the (train+validation) for train, 20% for validation
+    # This means validation will be 0.2 * 0.8 = 0.16 of the total dataset.
+    # Training will be 0.8 * 0.8 = 0.64 of the total dataset.
+    train_idx, val_idx = train_test_split(train_val_idx, test_size=0.2, random_state=42) # test_size=0.2 means 20% of train_val_idx for validation
+
+    # Prepare graph data for validation set
+    val_graphs = [graphs[i] for i in val_idx]
+    val_graph_batch = Batch.from_data_list(val_graphs)
+
+    # Prepare sigma data for validation set
+    sigma_val = torch.tensor(sigma_data_scaled[val_idx], dtype=torch.float)
+
+    # Prepare target data for validation set
+    y_val = torch.tensor(y[val_idx], dtype=torch.float)
+
+    # Existing train and test set preparations remain largely the same, just using the new indices.
     train_graphs = [graphs[i] for i in train_idx]
     test_graphs = [graphs[i] for i in test_idx]
     
@@ -272,6 +292,9 @@ def main():
     sigma_test = sigma_test.to(device)
     y_train = y_train.to(device)
     y_test = y_test.to(device)
+    val_graph_batch = val_graph_batch.to(device)
+    sigma_val = sigma_val.to(device)
+    y_val = y_val.to(device)
     
     # Set dimensions for the two branches.
     node_feature_dim = train_graphs[0].x.shape[1]
@@ -284,16 +307,64 @@ def main():
     
     num_epochs = 10
     train_losses = []
-    test_losses = []
+    val_losses = []
     
     print("Starting training for Fusion Model...")
     for epoch in range(num_epochs):
         train_loss, _ = train_epoch(model, optimizer, criterion, train_graph_batch, sigma_train, y_train, device)
-        test_loss, preds = evaluate(model, criterion, test_graph_batch, sigma_test, y_test, device)
+        val_loss, _ = evaluate(model, criterion, val_graph_batch, sigma_val, y_val, device)
         train_losses.append(train_loss)
-        test_losses.append(test_loss)
+        val_losses.append(val_loss)
         if epoch % 10 == 0 or epoch == num_epochs - 1:
-            print(f"Epoch {epoch+1}/{num_epochs}: Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}")
+            print(f"Epoch {epoch+1}/{num_epochs}: Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+    # Final evaluation on Validation Set
+    model.eval()
+    with torch.no_grad():
+        val_preds_tensor = model(val_graph_batch, sigma_val)
+        val_preds = val_preds_tensor.cpu().numpy()
+        y_val_true = y_val.cpu().numpy()
+
+    print("\nFinal Validation Set Metrics:")
+    val_mae = mean_absolute_error(y_val_true, val_preds)
+    val_mse = mean_squared_error(y_val_true, val_preds)
+    val_rmse = np.sqrt(val_mse)
+    val_r2 = r2_score(y_val_true, val_preds)
+
+    print(f"MAE (Validation): {val_mae:.4f}")
+    print(f"MSE (Validation): {val_mse:.4f}")
+    print(f"RMSE (Validation): {val_rmse:.4f}")
+    print(f"R^2 (Validation): {val_r2:.4f}")
+
+    validation_errors = val_preds - y_val_true
+    abs_validation_errors = np.abs(validation_errors)
+    print(f"Validation Set Errors (predicted - true): {validation_errors.tolist()}")
+
+
+    if len(abs_validation_errors) > 0:
+        max_abs_error_val = np.max(abs_validation_errors)
+        pct_err_le_02_val = np.sum(abs_validation_errors <= 0.2) / len(abs_validation_errors) * 100
+        pct_err_gt0_le_02_val = np.sum((validation_errors > 0) & (validation_errors <= 0.2)) / len(validation_errors) * 100
+        pct_err_gt_neg02_lt0_val = np.sum((validation_errors > -0.2) & (validation_errors < 0)) / len(validation_errors) * 100
+        pct_err_le_04_val = np.sum(abs_validation_errors <= 0.4) / len(abs_validation_errors) * 100
+        pct_err_gt0_le_04_val = np.sum((validation_errors > 0) & (validation_errors <= 0.4)) / len(validation_errors) * 100
+        pct_err_gt_neg04_lt0_val = np.sum((validation_errors > -0.4) & (validation_errors < 0)) / len(validation_errors) * 100
+    else:
+        max_abs_error_val = 0.0
+        pct_err_le_02_val = 0.0
+        pct_err_gt0_le_02_val = 0.0
+        pct_err_gt_neg02_lt0_val = 0.0
+        pct_err_le_04_val = 0.0
+        pct_err_gt0_le_04_val = 0.0
+        pct_err_gt_neg04_lt0_val = 0.0
+
+    print(f"Max Abs Error (Validation): {max_abs_error_val:.4f}")
+    print(f"% |Err|<=0.2 (Validation): {pct_err_le_02_val:.3f}%")
+    print(f"% Err in (0,0.2] (Validation): {pct_err_gt0_le_02_val:.3f}%")
+    print(f"% Err in (-0.2,0) (Validation): {pct_err_gt_neg02_lt0_val:.3f}%")
+    print(f"% |Err|<=0.4 (Validation): {pct_err_le_04_val:.3f}%")
+    print(f"% Err in (0,0.4] (Validation): {pct_err_gt0_le_04_val:.3f}%")
+    print(f"% Err in (-0.4,0) (Validation): {pct_err_gt_neg04_lt0_val:.3f}%")
     
     # Calculate metrics on test set.
     model.eval()
@@ -308,14 +379,15 @@ def main():
     rmse = np.sqrt(mse)
     r2 = r2_score(y_true, preds)
     
-    print("\nEvaluation Metrics for Fusion Model (Test Set):") # Clarify this is for the test set
-    print(f"MAE: {mae:.4f}")
-    print(f"MSE: {mse:.4f}")
-    print(f"RMSE: {rmse:.4f}")
-    print(f"R^2: {r2:.4f}")
+    print("\nFinal Test Set Metrics:") # Ensure title is clear
+    print(f"MAE (Test): {mae:.4f}") # mae, mse, etc. are already calculated for test set
+    print(f"MSE (Test): {mse:.4f}")
+    print(f"RMSE (Test): {rmse:.4f}")
+    print(f"R^2 (Test): {r2:.4f}")
 
     # Calculate additional metrics for the test set
     errors_test = preds - y_true
+    print(f"Test Set Errors (predicted - true): {errors_test.tolist()}")
     abs_errors_test = np.abs(errors_test)
 
     if len(abs_errors_test) > 0: # Ensure there are errors to calculate
@@ -345,40 +417,62 @@ def main():
     # Optional detailed error percentages can be uncommented by the user if needed.
     
     # Plotting section
-    # Loss Curve Plot (Existing - uses validation loss for 'Test Loss' curve)
-    plt.figure(figsize=(18, 5)) # Adjusted for three subplots
-    plt.subplot(1, 3, 1)
+    # Loss Curve Plot
+    plt.figure(figsize=(8, 6)) # Can be a single plot figure
     plt.plot(train_losses, label="Train Loss")
-    plt.plot(test_losses, label="Validation Loss per Epoch")
+    plt.plot(val_losses, label="Validation Loss per Epoch")
     plt.xlabel("Epoch")
     plt.ylabel("Loss (MSE)")
     plt.title("Loss Curve - Fusion Model")
     plt.legend()
-    plt.savefig("loss_curve_fusion_model.png") # Save loss curve
-    plt.close() # Close figure
+    plt.savefig("loss_curve_fusion_model.png")
+    plt.close()
+
+    # Validation Set Parity Plot
+    plt.figure(figsize=(6, 5))
+    plt.scatter(y_val_true, val_preds, alpha=0.6, label='Validation Data')
+    plt.xlabel("True pKa (Validation Set)")
+    plt.ylabel("Predicted pKa (Validation Set)")
+    plt.title("Validation Set: True vs Predicted pKa")
+    if len(y_val_true) > 0 and len(val_preds) > 0:
+        min_val_v = min(np.min(y_val_true), np.min(val_preds))
+        max_val_v = max(np.max(y_val_true), np.max(val_preds))
+        plt.plot([min_val_v, max_val_v], [min_val_v, max_val_v], 'r--', label='y=x')
+    plt.legend()
+    plt.savefig("parity_plot_validation_set.png")
+    plt.close()
+
+    # Validation Set Error Distribution Plot
+    plt.figure(figsize=(6, 5))
+    plt.hist(validation_errors, bins=20)
+    plt.xlabel('Error (Predicted - True) on Validation Set')
+    plt.ylabel('Count')
+    plt.title('Validation Set: Error Distribution')
+    plt.savefig("error_dist_validation_set.png")
+    plt.close()
 
     # Test Set Parity Plot
     plt.figure(figsize=(6, 5))
-    plt.scatter(y_true, preds, alpha=0.6)
+    plt.scatter(y_true, preds, alpha=0.6, label='Test Data') # y_true and preds are from test set
     plt.xlabel("True pKa (Test Set)")
     plt.ylabel("Predicted pKa (Test Set)")
     plt.title("Test Set: True vs Predicted pKa")
     if len(y_true) > 0 and len(preds) > 0:
-        min_val = min(np.min(y_true), np.min(preds))
-        max_val = max(np.max(y_true), np.max(preds))
-        plt.plot([min_val, max_val], [min_val, max_val], 'r--', label='y=x')
-        plt.legend()
-    plt.savefig("parity_plot_test_set_fusion_model.png")
-    plt.close() # Close figure
+        min_val_t = min(np.min(y_true), np.min(preds))
+        max_val_t = max(np.max(y_true), np.max(preds))
+        plt.plot([min_val_t, max_val_t], [min_val_t, max_val_t], 'r--', label='y=x')
+    plt.legend()
+    plt.savefig("parity_plot_test_set.png")
+    plt.close()
 
     # Test Set Error Distribution Plot
     plt.figure(figsize=(6, 5))
-    plt.hist(errors_test, bins=20)
+    plt.hist(errors_test, bins=20) # errors_test is from test set
     plt.xlabel('Error (Predicted - True) on Test Set')
     plt.ylabel('Count')
     plt.title('Test Set: Error Distribution')
-    plt.savefig("error_dist_test_set_fusion_model.png")
-    plt.close() # Close figure
+    plt.savefig("error_dist_test_set.png")
+    plt.close()
     
     # Remove plt.show() as it's not needed for automated scripts and can cause issues.
     # The existing plt.show() at the end of the original script should be removed or commented out.
