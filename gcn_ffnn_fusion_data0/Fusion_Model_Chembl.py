@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,6 +15,7 @@ from torch_geometric.nn import GCNConv, global_mean_pool, BatchNorm
 
 from rdkit import Chem
 from rdkit.Chem import rdchem
+
 
 # -------------------------------
 # Data Loading and Preprocessing
@@ -384,4 +386,18 @@ def main():
     # plt.show() # REMOVE OR COMMENT OUT THIS LINE
 
 if __name__ == "__main__":
-    main()
+    script_dir_for_output = os.path.dirname(os.path.abspath(__file__))
+    output_file_path = os.path.join(script_dir_for_output, "output.txt")
+    original_stdout = sys.stdout
+    output_file_handle = None # Keep this for the finally block
+
+    try:
+        # Redirect stdout to file
+        output_file_handle = open(output_file_path, 'w')
+        sys.stdout = output_file_handle
+        main()
+    finally:
+        if sys.stdout.name == output_file_path: # Check if stdout is our file
+             if output_file_handle: # Ensure it's not None
+                output_file_handle.close()
+        sys.stdout = original_stdout # Restore original stdout
