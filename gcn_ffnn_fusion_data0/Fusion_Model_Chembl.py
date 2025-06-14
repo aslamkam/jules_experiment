@@ -305,7 +305,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
     criterion = nn.MSELoss()
     
-    num_epochs = 10
+    num_epochs = 2200
     train_losses = []
     val_losses = []
     
