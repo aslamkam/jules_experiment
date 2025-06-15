@@ -280,7 +280,7 @@ def main():
         print("GCN model architecture parameters saved to 'gcn_model_params.txt'")
         
         print("\n--- Training GCN Model ---")
-        epochs = 100
+        epochs = 1000
         for ep in range(epochs):
             gcn.train()
             opt.zero_grad()
