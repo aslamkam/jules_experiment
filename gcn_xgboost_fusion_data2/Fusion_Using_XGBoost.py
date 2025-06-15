@@ -121,12 +121,36 @@ class MolecularGCNModel(nn.Module):
 def print_metrics(y_true, y_pred, set_name):
     """Calculates and prints regression metrics."""
     mse = mean_squared_error(y_true, y_pred)
+    rmse = np.sqrt(mse) # Calculate RMSE
     mae = mean_absolute_error(y_true, y_pred)
     r2 = r2_score(y_true, y_pred)
     print(f"\n--- {set_name} Set Metrics ---")
     print(f"R-squared (R2): {r2:.4f}")
     print(f"Mean Squared Error (MSE): {mse:.4f}")
+    print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
     print(f"Mean Absolute Error (MAE): {mae:.4f}")
+
+    # Detailed error statistics, similar to the MLP script
+    if set_name in ['Validation', 'Test']: # Only calculate for Validation and Test sets
+        errors = y_pred - y_true
+        abs_errors = np.abs(errors)
+
+        if len(abs_errors) > 0:
+            print(f"Max Abs Error ({set_name}): {np.max(abs_errors):.4f}")
+            print(f"% |Err|<=0.2 ({set_name}): {np.sum(abs_errors <= 0.2) / len(abs_errors) * 100:.2f}%")
+            print(f"% Err in (0,0.2] ({set_name}): {np.sum((errors > 0) & (errors <= 0.2)) / len(errors) * 100:.2f}%")
+            print(f"% Err in (-0.2,0) ({set_name}): {np.sum((errors < 0) & (errors >= -0.2)) / len(errors) * 100:.2f}%")
+            print(f"% |Err|<=0.4 ({set_name}): {np.sum(abs_errors <= 0.4) / len(abs_errors) * 100:.2f}%")
+            print(f"% Err in (0,0.4] ({set_name}): {np.sum((errors > 0) & (errors <= 0.4)) / len(errors) * 100:.2f}%")
+            print(f"% Err in (-0.4,0) ({set_name}): {np.sum((errors < 0) & (errors >= -0.4)) / len(errors) * 100:.2f}%")
+        else:
+            print(f"Max Abs Error ({set_name}): 0.0")
+            print(f"% |Err|<=0.2 ({set_name}): 0.0%")
+            print(f"% Err in (0,0.2] ({set_name}): 0.0%")
+            print(f"% Err in (-0.2,0) ({set_name}): 0.0%")
+            print(f"% |Err|<=0.4 ({set_name}): 0.0%")
+            print(f"% Err in (0,0.4] ({set_name}): 0.0%")
+            print(f"% Err in (-0.4,0) ({set_name}): 0.0%")
     print("--------------------------")
 
 def plot_results(y_true, y_pred, set_name):
@@ -237,9 +261,23 @@ def main():
         
         # Initialize and train GCN
         in_dim = graphs[0].x.shape[1]
-        gcn = MolecularGCNModel(in_dim).to(device)
+        # Define hid_dim and out_dim as per MolecularGCNModel defaults
+        hid_dim = 64
+        out_dim = 64
+        gcn = MolecularGCNModel(in_dim, hid_dim=hid_dim, out_dim=out_dim).to(device) # Pass them to constructor
         opt = torch.optim.Adam(gcn.parameters(), lr=1e-3, weight_decay=1e-5)
         loss_fn = nn.MSELoss()
+
+        # --- Save GCN Model Architecture Parameters ---
+        gcn_arch_params = {
+            'in_dim': in_dim,
+            'hid_dim': hid_dim,
+            'out_dim': out_dim
+        }
+        with open('gcn_model_params.txt', 'w') as f:
+            for key, value in gcn_arch_params.items():
+                f.write(f'{key}: {value}\n')
+        print("GCN model architecture parameters saved to 'gcn_model_params.txt'")
         
         print("\n--- Training GCN Model ---")
         epochs = 100
@@ -253,6 +291,10 @@ def main():
             if (ep + 1) % 20 == 0:
                 print(f"GCN Epoch {ep+1}/{epochs}, Loss: {loss.item():.4f}")
         
+        # --- Save GCN Model State ---
+        torch.save(gcn.state_dict(), 'gcn_model_statedict.pt')
+        print("GCN model state dictionary saved to 'gcn_model_statedict.pt'")
+
         # Extract embeddings after training is complete
         print("--- Extracting GCN Embeddings ---")
         gcn.eval()
@@ -275,6 +317,16 @@ def main():
         )
         xgb.fit(X_train_comb, y_train, eval_set=[(X_val_comb, y_val)], verbose=False)
         print("XGBoost training complete.")
+
+        # --- Save XGBoost Parameters ---
+        xgb_params = xgb.get_params()
+        # Convert single-value lists or tuples to simple values for cleaner CSV
+        for k, v in xgb_params.items():
+            if isinstance(v, (list, tuple)) and len(v) == 1:
+                xgb_params[k] = v[0]
+        xgb_params_df = pd.DataFrame([xgb_params])
+        xgb_params_df.to_csv('best_xgboost_parameters.csv', index=False)
+        print("XGBoost parameters saved to 'best_xgboost_parameters.csv'")
 
         # --- Evaluate Final Model ---
         pred_train = xgb.predict(X_train_comb)
