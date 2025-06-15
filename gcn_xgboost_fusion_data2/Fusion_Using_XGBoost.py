@@ -28,84 +28,139 @@ import matplotlib.pyplot as plt
 # -------------------------------
 
 def parse_benson_groups(text):
+    """Parses the string representation of a defaultdict into a dictionary."""
     match = re.match(r".*defaultdict\(<class 'int'>, (.*)\)", text)
     dict_str = match.group(1) if match else text
-    return ast.literal_eval(dict_str)
+    try:
+        return ast.literal_eval(dict_str)
+    except (ValueError, SyntaxError):
+        return {} # Return an empty dict if parsing fails
 
 # -------------------------------
 # Graph conversion & embedding model
 # -------------------------------
 
 def atom_to_feature_vector(atom):
-    hybrid_map = {rdchem.HybridizationType.SP:0, rdchem.HybridizationType.SP2:1,
-                  rdchem.HybridizationType.SP3:2, rdchem.HybridizationType.SP3D:3,
-                  rdchem.HybridizationType.SP3D2:4}
-    AllChem.ComputeGasteigerCharges(atom.GetOwningMol())
+    """Converts an RDKit atom object to a feature vector."""
+    hybrid_map = {
+        rdchem.HybridizationType.SP: 0, rdchem.HybridizationType.SP2: 1,
+        rdchem.HybridizationType.SP3: 2, rdchem.HybridizationType.SP3D: 3,
+        rdchem.HybridizationType.SP3D2: 4
+    }
+    # Gasteiger charge is computed once for the whole molecule in molecule_to_graph
     charge = float(atom.GetProp('_GasteigerCharge')) if atom.HasProp('_GasteigerCharge') else 0.0
     return [
-        atom.GetAtomicNum(), atom.GetFormalCharge(), atom.GetDegree(),
-        atom.GetTotalNumHs(), int(atom.GetIsAromatic()),
-        hybrid_map.get(atom.GetHybridization(), -1), int(atom.IsInRing()),
-        atom.GetMass(), charge
+        atom.GetAtomicNum(),
+        atom.GetFormalCharge(),
+        atom.GetDegree(),
+        atom.GetTotalNumHs(),
+        int(atom.GetIsAromatic()),
+        hybrid_map.get(atom.GetHybridization(), -1),
+        int(atom.IsInRing()),
+        atom.GetMass(),
+        charge
     ]
 
-
 def molecule_to_graph(smiles):
+    """Converts a SMILES string to a PyTorch Geometric Data object."""
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return None
     mol = Chem.AddHs(mol)
-    AllChem.ComputeGasteigerCharges(mol)
+    AllChem.ComputeGasteigerCharges(mol) # Compute charges once per molecule
+
     feats = [atom_to_feature_vector(atom) for atom in mol.GetAtoms()]
     x = torch.tensor(feats, dtype=torch.float)
+
     edges = []
     for bond in mol.GetBonds():
         i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
-        edges += [[i, j], [j, i]]
-    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous() if edges else torch.zeros((2,0), dtype=torch.long)
+        edges.extend([[i, j], [j, i]]) # Add edges in both directions
+
+    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous() if edges else torch.zeros((2, 0), dtype=torch.long)
     return Data(x=x, edge_index=edge_index)
 
 
 class MolecularGCNModel(nn.Module):
-    def __init__(self, in_dim, hid_dim=64):
+    """Graph Convolutional Network model for molecular embedding."""
+    def __init__(self, in_dim, hid_dim=64, out_dim=64):
         super().__init__()
         self.conv1 = GCNConv(in_dim, hid_dim)
         self.bn1 = BatchNorm(hid_dim)
         self.conv2 = GCNConv(hid_dim, hid_dim)
         self.bn2 = BatchNorm(hid_dim)
-        self.conv3 = GCNConv(hid_dim, hid_dim)
-        self.bn3 = BatchNorm(hid_dim)
+        self.conv3 = GCNConv(hid_dim, out_dim)
+        self.bn3 = BatchNorm(out_dim)
         self.dropout = nn.Dropout(0.2)
-        self.fc = nn.Linear(hid_dim, 1)
+        self.fc = nn.Linear(out_dim, 1) # Final layer for pKa prediction
 
     def forward(self, data):
-        x, edge_index, batch = data.x, data.edge_index, data.batch
-        # conv layers
-        x = F.relu(self.bn1(self.conv1(x, edge_index)))
-        x = self.dropout(x)
-        x_res = x
-        x = F.relu(self.bn2(self.conv2(x, edge_index)) + x_res)
-        x = self.dropout(x)
-        x = F.relu(self.bn3(self.conv3(x, edge_index)))
-        # global pooling
-        x = global_mean_pool(x, batch)
+        """Forward pass for training the GCN model directly."""
+        x = self.embed(data)
         return self.fc(x).squeeze()
 
     def embed(self, data):
+        """Generates molecular embeddings from graph data."""
         x, edge_index, batch = data.x, data.edge_index, data.batch
+
+        # GCN layers with batch norm, ReLU, and residual connection
         x = F.relu(self.bn1(self.conv1(x, edge_index)))
         x = self.dropout(x)
         x_res = x
         x = F.relu(self.bn2(self.conv2(x, edge_index)) + x_res)
         x = self.dropout(x)
         x = F.relu(self.bn3(self.conv3(x, edge_index)))
+
+        # Global pooling to get a graph-level embedding
         return global_mean_pool(x, batch)
 
 # -------------------------------
-# Pipeline: load, preprocess, train & combine
+# Evaluation and Utility Functions
+# -------------------------------
+
+def print_metrics(y_true, y_pred, set_name):
+    """Calculates and prints regression metrics."""
+    mse = mean_squared_error(y_true, y_pred)
+    mae = mean_absolute_error(y_true, y_pred)
+    r2 = r2_score(y_true, y_pred)
+    print(f"\n--- {set_name} Set Metrics ---")
+    print(f"R-squared (R2): {r2:.4f}")
+    print(f"Mean Squared Error (MSE): {mse:.4f}")
+    print(f"Mean Absolute Error (MAE): {mae:.4f}")
+    print("--------------------------")
+
+def plot_results(y_true, y_pred, set_name):
+    """Generates and saves parity and error distribution plots."""
+    # Parity Plot
+    plt.figure(figsize=(8, 8))
+    plt.scatter(y_true, y_pred, alpha=0.6, label=f'{set_name} Data')
+    lims = [min(y_true.min(), y_pred.min()), max(y_true.max(), y_pred.max())]
+    plt.plot(lims, lims, 'r--', alpha=0.75, label='Ideal Fit')
+    plt.xlabel(f"Actual pKa ({set_name} Set)")
+    plt.ylabel(f"Predicted pKa ({set_name} Set)")
+    plt.title(f"{set_name} Set: True vs. Predicted pKa")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(f"parity_plot_{set_name.lower()}_set.png")
+    plt.close()
+
+    # Error Distribution Plot
+    errors = y_pred - y_true
+    plt.figure(figsize=(8, 6))
+    plt.hist(errors, bins=30, alpha=0.75)
+    plt.xlabel(f"Error (Predicted - True) on {set_name} Set")
+    plt.ylabel("Frequency")
+    plt.title(f"{set_name} Set: Error Distribution")
+    plt.grid(True)
+    plt.savefig(f"error_dist_{set_name.lower()}_set.png")
+    plt.close()
+
+# -------------------------------
+# Main Pipeline
 # -------------------------------
 
 def main():
+    """Main function to run the entire data processing, training, and evaluation pipeline."""
     output_path = "output.txt"
     original_stdout = sys.stdout
     output_handle = open(output_path, 'w')
@@ -113,246 +168,149 @@ def main():
 
     try:
         # --- Load Data ---
-        # Define relative paths
-    benson_file_path = os.path.join("Features", "Chembl-12C", "Benson-Groups", "ChEMBL_amines_12C.xlsx")
-    csv_file_path = os.path.join("Features", "Chembl-12C", "ChEMBL_amines_12C.csv")
+        benson_file_path = os.path.join("..", "Features", "Chembl-12C", "Benson-Groups", "ChEMBL_amines_12C.xlsx")
+        csv_file_path = os.path.join("..", "Features", "Chembl-12C", "ChEMBL_amines_12C.csv")
 
-    # Load data
-    df_benson = pd.read_excel(benson_file_path)
-    df_csv = pd.read_csv(csv_file_path)
+        df_benson = pd.read_excel(benson_file_path)
+        df_csv = pd.read_csv(csv_file_path)
 
-    # Process Benson data
-    df_benson['features'] = df_benson['benson_groups'].apply(parse_benson_groups)
-    df_benson = df_benson[['Smiles', 'features']]
+        # --- Preprocess Data ---
+        df_benson['features'] = df_benson['benson_groups'].apply(parse_benson_groups)
+        df_csv.rename(columns={'CX Basic pKa': 'pka_value'}, inplace=True)
+        df = pd.merge(df_csv, df_benson[['Smiles', 'features']], on='Smiles', how='inner')
+        df.dropna(subset=['Smiles', 'pka_value', 'features'], inplace=True)
+        df = df.reset_index(drop=True)
 
-    # Process CSV data
-    df_csv.rename(columns={'CX Basic pKa': 'pka_value'}, inplace=True)
-    df_csv = df_csv[['Smiles', 'pka_value', 'Molecular Formula', 'Amine Class', 'Inchi Key']]
-    df_csv.dropna(subset=['Smiles', 'pka_value'], inplace=True)
+        # --- Convert SMILES to Graphs and Filter Invalid Entries ---
+        graphs, valid_indices = [], []
+        for i, smi in enumerate(df['Smiles']):
+            g = molecule_to_graph(smi)
+            if g is not None:
+                graphs.append(g)
+                valid_indices.append(i)
+            else:
+                print(f"Warning: Could not convert SMILES '{smi}' to graph. Skipping.")
+        
+        if not graphs:
+            raise ValueError("No valid molecular graphs could be created from the input data.")
 
-    # Merge dataframes
-    df = pd.merge(df_csv, df_benson, on='Smiles', how='inner')
-    df.dropna(subset=['pka_value', 'features'], inplace=True)
-    df.reset_index(drop=True, inplace=True)
+        # Filter all dataframes and arrays based on valid graphs
+        df_filtered = df.iloc[valid_indices].reset_index(drop=True)
+        y = df_filtered['pka_value'].values
+        metadata_df = df_filtered[['Smiles', 'Molecular Formula', 'Amine Class', 'Inchi Key']]
 
-    # --- Feature and Target Extraction ---
-    vec = DictVectorizer(sparse=False)
-    # X_tab will be created after graph conversion and filtering
-    y = df['pka_value'].values
-    metadata_df = df[['Smiles', 'Molecular Formula', 'Amine Class', 'Inchi Key']]
-    smiles_list = df['Smiles'].tolist()
+        # Vectorize tabular Benson group features
+        vec = DictVectorizer(sparse=False)
+        X_tab = vec.fit_transform(df_filtered['features'])
 
-    # --- Convert to graphs and filter invalid SMILES ---
-    graphs = []
-    valid_indices = []
-    for i, smi in enumerate(smiles_list):
-        g = molecule_to_graph(smi)
-        if g is not None:
-            # Store graph with a placeholder for batch attribute, to be assigned later
-            graphs.append(g)
-            valid_indices.append(i)
-        else:
-            print(f"Warning: Could not convert SMILES '{smi}' to graph. Skipping.")
+        # --- Data Splitting ---
+        # Stratify to ensure target distribution is similar across splits
+        full_indices = np.arange(len(y))
+        try:
+            train_val_idx, test_idx = train_test_split(full_indices, test_size=0.2, random_state=42, stratify=pd.qcut(y, q=10, labels=False, duplicates='drop'))
+            train_idx, val_idx = train_test_split(train_val_idx, test_size=0.25, random_state=42, stratify=pd.qcut(y[train_val_idx], q=8, labels=False, duplicates='drop'))
+        except ValueError: # Fallback for small datasets where stratification fails
+            print("Warning: Stratification failed, falling back to standard split.")
+            train_val_idx, test_idx = train_test_split(full_indices, test_size=0.2, random_state=42)
+            train_idx, val_idx = train_test_split(train_val_idx, test_size=0.25, random_state=42)
 
-    # Filter y, metadata, and df based on valid graphs
-    y = y[valid_indices]
-    metadata_df = metadata_df.iloc[valid_indices].reset_index(drop=True)
-    df_filtered = df.iloc[valid_indices].reset_index(drop=True)
+        X_tab_train, X_tab_val, X_tab_test = X_tab[train_idx], X_tab[val_idx], X_tab[test_idx]
+        y_train, y_val, y_test = y[train_idx], y[val_idx], y[test_idx]
+        metadata_test = metadata_df.iloc[test_idx]
 
-    # Now create X_tab from the filtered df
-    X_tab = vec.fit_transform(df_filtered['features'])
+        # --- Scale Tabular Features ---
+        scaler = StandardScaler()
+        X_tab_train = scaler.fit_transform(X_tab_train)
+        X_tab_val = scaler.transform(X_tab_val)
+        X_tab_test = scaler.transform(X_tab_test)
 
+        # --- GCN Training and Embedding Extraction ---
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        print(f"Using device: {device}")
 
-    # --- Data Splitting ---
-    full_indices = np.arange(len(y))
-    train_val_idx, test_idx = train_test_split(full_indices, test_size=0.2, random_state=42, stratify=pd.qcut(y, q=10, labels=False, duplicates='drop'))
-    train_idx, val_idx = train_test_split(train_val_idx, test_size=0.25, random_state=42, stratify=pd.qcut(y[train_val_idx], q=8, labels=False, duplicates='drop')) # 0.25 * 0.8 = 0.2
-
-    # Tabular splits
-    X_tab_train, X_tab_val, X_tab_test = X_tab[train_idx], X_tab[val_idx], X_tab[test_idx]
-    y_train, y_val, y_test = y[train_idx], y[val_idx], y[test_idx]
-    metadata_train, metadata_val, metadata_test = metadata_df.iloc[train_idx], metadata_df.iloc[val_idx], metadata_df.iloc[test_idx]
-
-    # Graph splits
-    train_graphs = [graphs[i] for i in train_idx]
-    val_graphs = [graphs[i] for i in val_idx]
-    test_graphs = [graphs[i] for i in test_idx]
-
-    # Batch.from_data_list will create the batch attribute correctly.
-    # No need to manually assign g.batch here if creating Batch objects for the whole split.
-    train_batch = Batch.from_data_list(train_graphs) if train_graphs else Batch() # Handle empty list
-    val_batch = Batch.from_data_list(val_graphs) if val_graphs else Batch()
-    test_batch = Batch.from_data_list(test_graphs) if test_graphs else Batch()
-
-    # --- Scale Benson Features ---
-    scaler = StandardScaler()
-    X_tab_train = scaler.fit_transform(X_tab_train)
-    X_tab_val = scaler.transform(X_tab_val)
-    X_tab_test = scaler.transform(X_tab_test)
-
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    train_batch, val_batch, test_batch = train_batch.to(device), val_batch.to(device), test_batch.to(device)
-    y_train_t = torch.tensor(y_train, dtype=torch.float, device=device)
-    # y_val_t needed for GCN validation if we implement it
-    y_test_t = torch.tensor(y_test, dtype=torch.float, device=device)
-
-    # --- Train GCN ---
-    if not graphs: # No valid graphs were created
-        print("No valid molecular graphs to process. Exiting GCN training.")
-        # Set up dummy variables to allow pipeline to proceed if desired, or exit
-        emb_train, emb_val, emb_test = [np.array([]).reshape(X_tab_train.shape[0] if i==0 else (X_tab_val.shape[0] if i==1 else X_tab_test.shape[0]), 0) for i in range(3)]
-    else:
-        in_dim = graphs[0].x.shape[1] # Get in_dim from the first valid graph
+        # Create graph batches
+        train_batch = Batch.from_data_list([graphs[i] for i in train_idx]).to(device)
+        val_batch = Batch.from_data_list([graphs[i] for i in val_idx]).to(device)
+        test_batch = Batch.from_data_list([graphs[i] for i in test_idx]).to(device)
+        
+        y_train_t = torch.tensor(y_train, dtype=torch.float, device=device)
+        
+        # Initialize and train GCN
+        in_dim = graphs[0].x.shape[1]
         gcn = MolecularGCNModel(in_dim).to(device)
         opt = torch.optim.Adam(gcn.parameters(), lr=1e-3, weight_decay=1e-5)
         loss_fn = nn.MSELoss()
-    epochs = 11 # Updated epochs
-    for ep in range(epochs):
-        gcn.train(); opt.zero_grad()
-        # Ensure train_batch is not empty and has nodes
-        if train_batch.x is not None and train_batch.x.size(0) > 0:
+        
+        print("\n--- Training GCN Model ---")
+        epochs = 100
+        for ep in range(epochs):
+            gcn.train()
+            opt.zero_grad()
             pred = gcn(train_batch)
             loss = loss_fn(pred, y_train_t)
-            loss.backward(); opt.step()
-            if ep % 20 == 0 or ep == epochs -1: # Print more frequently or at least the last one
+            loss.backward()
+            opt.step()
+            if (ep + 1) % 20 == 0:
                 print(f"GCN Epoch {ep+1}/{epochs}, Loss: {loss.item():.4f}")
-        else:
-            print(f"Skipping GCN training epoch {ep+1} due to empty train batch.")
-            break # or continue, depending on desired behavior
-
-        # --- Extract embeddings ---
+        
+        # Extract embeddings after training is complete
+        print("--- Extracting GCN Embeddings ---")
         gcn.eval()
         with torch.no_grad():
-            emb_train = gcn.embed(train_batch).cpu().numpy() if train_batch.x is not None and train_batch.x.size(0) > 0 else np.array([]).reshape(X_tab_train.shape[0], 0)
-            emb_val = gcn.embed(val_batch).cpu().numpy() if val_batch.x is not None and val_batch.x.size(0) > 0 else np.array([]).reshape(X_tab_val.shape[0], 0)
-            emb_test = gcn.embed(test_batch).cpu().numpy() if test_batch.x is not None and test_batch.x.size(0) > 0 else np.array([]).reshape(X_tab_test.shape[0], 0)
+            emb_train = gcn.embed(train_batch).cpu().numpy()
+            emb_val = gcn.embed(val_batch).cpu().numpy()
+            emb_test = gcn.embed(test_batch).cpu().numpy()
 
-    # --- Combine features ---
-    # Ensure correct dimensions if some embeddings are empty
-    # If emb_*.size is 0 (because it's reshaped to (N,0)), hstack still works as expected.
-    X_train_comb = np.hstack([X_tab_train, emb_train])
-    X_val_comb = np.hstack([X_tab_val, emb_val])
-    X_test_comb = np.hstack([X_tab_test, emb_test])
+        # --- Combine Features for XGBoost ---
+        X_train_comb = np.hstack([X_tab_train, emb_train])
+        X_val_comb = np.hstack([X_tab_val, emb_val])
+        X_test_comb = np.hstack([X_tab_test, emb_test])
 
-# -------------------------------
-# Pipeline: load, preprocess, train & combine
-# -------------------------------
+        # --- Train XGBoost on Combined Features ---
+        print("\n--- Training XGBoost Regressor ---")
+        xgb = XGBRegressor(
+            colsample_bytree=0.8, gamma=0, learning_rate=0.1,
+            max_depth=7, n_estimators=200,
+            reg_alpha=0.1, reg_lambda=1, subsample=0.7, random_state=42, early_stopping_rounds=10
+        )
+        xgb.fit(X_train_comb, y_train, eval_set=[(X_val_comb, y_val)], verbose=False)
+        print("XGBoost training complete.")
 
+        # --- Evaluate Final Model ---
+        pred_train = xgb.predict(X_train_comb)
+        pred_val = xgb.predict(X_val_comb)
+        pred_test = xgb.predict(X_test_comb)
+        
+        print_metrics(y_train, pred_train, 'Train')
+        print_metrics(y_val, pred_val, 'Validation')
+        print_metrics(y_test, pred_test, 'Test')
 
-    # --- Train XGBoost on combined ---
-    xgb = XGBRegressor(
-        colsample_bytree=0.8, gamma=0, learning_rate=0.1,
-        max_depth=7, n_estimators=20, # Updated n_estimators
-        reg_alpha=0.1, reg_lambda=1, subsample=0.7, random_state=42
-    )
-    # Check if X_train_comb is not empty before fitting
-    if X_train_comb.shape[0] > 0:
-        xgb.fit(X_train_comb, y_train, eval_set=[(X_val_comb, y_val)], early_stopping_rounds=10, verbose=False)
-    else:
-        print("Skipping XGBoost training due to empty training data.")
+        # --- Generate and Save Plots ---
+        plot_results(y_val, pred_val, 'Validation')
+        plot_results(y_test, pred_test, 'Test')
+        print("\nGenerated and saved parity and error plots.")
 
-
-    # --- Evaluate ---
-    # Ensure that data exists before trying to predict and evaluate
-    evaluation_results = {} # Store predictions for plotting
-
-    if X_train_comb.shape[0] > 0 and y_train.shape[0] > 0:
-        if xgb.get_booster().num_boosted_rounds() > 0:
-            pred_train = xgb.predict(X_train_comb)
-            print_metrics(y_train, pred_train, 'Train')
-            evaluation_results['Train'] = {'true': y_train, 'pred': pred_train}
-        else:
-            print(f"\nSkipping evaluation for Train as XGBoost model was not trained.")
-
-    if X_val_comb.shape[0] > 0 and y_val.shape[0] > 0:
-        if xgb.get_booster().num_boosted_rounds() > 0:
-            pred_val = xgb.predict(X_val_comb)
-            print_metrics(y_val, pred_val, 'Validation')
-            evaluation_results['Validation'] = {'true': y_val, 'pred': pred_val}
-        else:
-            print(f"\nSkipping evaluation for Validation as XGBoost model was not trained.")
-
-    if X_test_comb.shape[0] > 0 and y_test.shape[0] > 0:
-        if xgb.get_booster().num_boosted_rounds() > 0:
-            pred_test = xgb.predict(X_test_comb)
-            print_metrics(y_test, pred_test, 'Test')
-            evaluation_results['Test'] = {'true': y_test, 'pred': pred_test}
-        else:
-            print(f"\nSkipping evaluation for Test as XGBoost model was not trained.")
-
-    # --- Generate and Save Plots ---
-    if 'Validation' in evaluation_results:
-        y_val_true = evaluation_results['Validation']['true']
-        y_val_pred = evaluation_results['Validation']['pred']
-
-        plt.figure(figsize=(8, 8))
-        plt.scatter(y_val_true, y_val_pred, alpha=0.5)
-        plt.plot([min(y_val_true.min(),y_val_pred.min()), max(y_val_true.max(),y_val_pred.max())], [min(y_val_true.min(),y_val_pred.min()), max(y_val_true.max(),y_val_pred.max())], 'r--')
-        plt.xlabel("Actual pKa (Validation Set)")
-        plt.ylabel("Predicted pKa (Validation Set)")
-        plt.title("Validation Set: True vs Predicted pKa")
-        plt.savefig("parity_plot_validation_set.png")
-        plt.close()
-
-        val_errors = y_val_pred - y_val_true
-        plt.figure(figsize=(8, 6))
-        plt.hist(val_errors, bins=30, alpha=0.7)
-        plt.xlabel("Error (Predicted - True) on Validation Set")
-        plt.ylabel("Count")
-        plt.title("Validation Set: Error Distribution")
-        plt.savefig("error_dist_validation_set.png")
-        plt.close()
-
-    if 'Test' in evaluation_results:
-        y_test_true = evaluation_results['Test']['true']
-        y_test_pred = evaluation_results['Test']['pred']
-
-        plt.figure(figsize=(8, 8))
-        plt.scatter(y_test_true, y_test_pred, alpha=0.5)
-        plt.plot([min(y_test_true.min(),y_test_pred.min()), max(y_test_true.max(),y_test_pred.max())], [min(y_test_true.min(),y_test_pred.min()), max(y_test_true.max(),y_test_pred.max())], 'r--')
-        plt.xlabel("Actual pKa (Test Set)")
-        plt.ylabel("Predicted pKa (Test Set)")
-        plt.title("Test Set: True vs Predicted pKa")
-        plt.savefig("parity_plot_test_set.png")
-        plt.close()
-
-        test_errors = y_test_pred - y_test_true
-        plt.figure(figsize=(8, 6))
-        plt.hist(test_errors, bins=30, alpha=0.7)
-        plt.xlabel("Error (Predicted - True) on Test Set")
-        plt.ylabel("Count")
-        plt.title("Test Set: Error Distribution")
-        plt.savefig("error_dist_test_set.png")
-        plt.close()
-
-    # --- Save Test Predictions to CSV ---
-    if 'Test' in evaluation_results and metadata_test is not None:
-        y_test_true = evaluation_results['Test']['true']
-        y_test_pred = evaluation_results['Test']['pred']
-
-        # Ensure metadata_test is aligned with y_test_true/pred.
-        # The splitting logic should ensure this, but an explicit check might be added if issues arise.
-        # Assuming metadata_test is already correctly filtered and ordered.
-
+        # --- Save Test Predictions to CSV ---
         predictions_df = pd.DataFrame({
-            'SMILES': metadata_test['Smiles'].values,
-            'Molecular Formula': metadata_test['Molecular Formula'].values,
-            'Amine Class': metadata_test['Amine Class'].values,
-            'Inchi Key': metadata_test['Inchi Key'].values,
-            'Actual_pKa': y_test_true,
-            'Predicted_pKa': y_test_pred
+            'SMILES': metadata_test['Smiles'],
+            'Molecular Formula': metadata_test['Molecular Formula'],
+            'Amine Class': metadata_test['Amine Class'],
+            'Inchi Key': metadata_test['Inchi Key'],
+            'Actual_pKa': y_test,
+            'Predicted_pKa': pred_test
         })
         predictions_df.to_csv('pka_predictions_xgboost_fusion.csv', index=False)
-        print("\nTest predictions saved to 'pka_predictions_xgboost_fusion.csv'")
-    else:
-        print("\nSkipping saving of test predictions as test data or predictions were not available.")
+        print("Test predictions saved to 'pka_predictions_xgboost_fusion.csv'")
 
+    except Exception as e:
+        print(f"An error occurred: {e}", file=sys.stderr)
+        # Also print to the output file if it's open
+        print(f"An error occurred: {e}")
     finally:
-        if 'output_handle' in locals() and output_handle and not output_handle.closed:
+        if 'output_handle' in locals() and not output_handle.closed:
             output_handle.close()
         sys.stdout = original_stdout
-        print(f"Finished. Stdout restored. Output saved to {output_path}")
-
+        print(f"\nFinished. Stdout restored. Full log saved to {output_path}")
 
 if __name__ == '__main__':
     main()
