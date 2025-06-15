@@ -130,6 +130,26 @@ def print_metrics(y_true, y_pred, set_name: str):
     print(f"\n--- {set_name} Metrics ---")
     print(f"MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}, R²: {r2:.4f}")
 
+    errors = y_pred - y_true
+    abs_errors = np.abs(errors)
+
+    if len(abs_errors) > 0:
+        print(f"Max Abs Error ({set_name}):", np.max(abs_errors))
+        print(f"% |Err|<=0.2 ({set_name}):", np.sum(abs_errors <= 0.2) / len(abs_errors) * 100)
+        print(f"% Err in (0,0.2] ({set_name}):", np.sum((errors > 0) & (errors <= 0.2)) / len(errors) * 100)
+        print(f"% Err in (-0.2,0) ({set_name}):", np.sum((errors < 0) & (errors >= -0.2)) / len(errors) * 100)
+        print(f"% |Err|<=0.4 ({set_name}):", np.sum(abs_errors <= 0.4) / len(abs_errors) * 100)
+        print(f"% Err in (0,0.4] ({set_name}):", np.sum((errors > 0) & (errors <= 0.4)) / len(errors) * 100)
+        print(f"% Err in (-0.4,0) ({set_name}):", np.sum((errors < 0) & (errors >= -0.4)) / len(errors) * 100)
+    else:
+        print(f"Max Abs Error ({set_name}): 0.0")
+        print(f"% |Err|<=0.2 ({set_name}): 0.0")
+        print(f"% Err in (0,0.2] ({set_name}): 0.0")
+        print(f"% Err in (-0.2,0) ({set_name}): 0.0")
+        print(f"% |Err|<=0.4 ({set_name}): 0.0")
+        print(f"% Err in (0,0.4] ({set_name}): 0.0")
+        print(f"% Err in (-0.4,0) ({set_name}): 0.0")
+
 def main():
     # Paths
     script_dir = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() else os.getcwd()
@@ -150,33 +170,58 @@ def main():
         df_benson['features'] = df_benson['benson_groups'].map(parse_benson_groups)
         df_benson = df_benson[['Smiles', 'features']]
 
-        df_csv = df_csv[['Smiles', 'CX Basic pKa']].rename(columns={'CX Basic pKa': 'pka_value'})
+        # df_csv = df_csv[['Smiles', 'CX Basic pKa']].rename(columns={'CX Basic pKa': 'pka_value'})
+        # Load df_csv and select/rename columns for metadata
+        df_csv = df_csv.rename(columns={'CX Basic pKa': 'pka_value'}) # Keep 'Smiles' as is.
+        # Columns available: 'ChEMBL ID', 'CX LogP', 'CX LogD', 'pka_value', 'Molecular Formula', 'Amine Class', 'Smiles', 'Inchi Key'
+        columns_to_keep = ['Smiles', 'pka_value', 'Molecular Formula', 'Amine Class', 'Inchi Key'] # Add 'ChEMBL ID' if desired
 
-        df = pd.merge(df_csv, df_benson, on='Smiles', how='inner').dropna().reset_index(drop=True)
+        # Ensure essential columns for merging and targets are present before selection
+        df_csv.dropna(subset=['Smiles', 'pka_value'], inplace=True)
+        df_csv = df_csv[columns_to_keep]
+
+        # Merge with Benson groups data
+        df = pd.merge(df_csv, df_benson, on='Smiles', how='inner')
+        # Drop rows where any of the essential features for model input might be missing AFTER merge
+        # (e.g. if a SMILES was in df_csv but not df_benson, or if 'features' is NaN)
+        df.dropna(subset=['pka_value', 'features'], inplace=True)
+        df.reset_index(drop=True, inplace=True)
+
 
         # Benson vectors
         dict_vec = DictVectorizer(sparse=False)
+        # Fit_transform on the 'features' column of the potentially reduced df
         X_b      = dict_vec.fit_transform(df['features'])
+        # y_vals are created from 'pka_value' of the same df
         y_vals   = df['pka_value'].astype(np.float32).values
 
         X_b_scaled, scaler = scale_features(X_b)
 
-        # Build graphs
-        graphs, benson_feats, targets = [], [], []
+        # Build graphs and collect metadata
+        graphs, benson_feats, targets, metadata_list = [], [], [], []
+        # Iterate over the final processed df to ensure indices align
         for i, row in df.iterrows():
             g = smiles_to_graph(row['Smiles'])
-            if g is None:
+            if g is None: # If a SMILES string fails graph conversion, skip this molecule
                 continue
             graphs.append(g)
+            # X_b_scaled was created from df['features'], so df.index[i] (or just i if reset_index) is the correct index
             benson_feats.append(X_b_scaled[i])
-            targets.append(row['pka_value'])
+            targets.append(row['pka_value']) # or y_vals[i]
+            metadata_list.append(row[['Smiles', 'Molecular Formula', 'Amine Class', 'Inchi Key']])
 
+        # Convert lists to tensors/DataFrames
         targets = torch.tensor(targets, dtype=torch.float)
         benson_feats = torch.tensor(np.array(benson_feats), dtype=torch.float)
+        metadata_full_df = pd.DataFrame(metadata_list) # metadata_full_df corresponds to `graphs`
 
+        # Now, indices for train/test split refer to positions in `graphs`, `targets`, and `metadata_full_df`
         idx_all = np.arange(len(graphs))
         train_val_idx, test_idx = train_test_split(idx_all, test_size=0.2, random_state=42)
         train_idx, val_idx     = train_test_split(train_val_idx, test_size=0.2, random_state=42)
+
+        # Extract metadata for the test set
+        metadata_test_df = metadata_full_df.iloc[test_idx].reset_index(drop=True)
 
         # Prepare loaders
         def subset(lst, idxs): return [lst[i] for i in idxs]
@@ -246,10 +291,72 @@ def main():
                     truths.append(y)
             return (torch.cat(truths).numpy(), torch.cat(preds).numpy())
 
+        y_train_true, y_train_pred = get_preds(train_loader)
+        print_metrics(y_train_true, y_train_pred, "Training")
+
         y_val, y_val_pred = get_preds(val_loader)
         print_metrics(y_val, y_val_pred, "Validation")
+
+        # Validation Set Parity Plot
+        plt.figure(figsize=(10, 6))
+        plt.scatter(y_val, y_val_pred, alpha=0.7)
+        plt.plot([y_val.min(), y_val.max()], [y_val.min(), y_val.max()], 'r--', lw=2)
+        plt.xlabel('Actual pKa (Validation Set)')
+        plt.ylabel('Predicted pKa (Validation Set)')
+        plt.title('Validation Set: True vs Predicted pKa')
+        plt.tight_layout()
+        plt.savefig('parity_plot_validation_set.png')
+        plt.close()
+
         y_test, y_test_pred = get_preds(test_loader)
         print_metrics(y_test, y_test_pred, "Test")
+
+        # Test Set Parity Plot
+        plt.figure(figsize=(10, 6))
+        plt.scatter(y_test, y_test_pred, alpha=0.7)
+        plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+        plt.xlabel('Actual pKa (Test Set)')
+        plt.ylabel('Predicted pKa (Test Set)')
+        plt.title('Test Set: True vs Predicted pKa')
+        plt.tight_layout()
+        plt.savefig('parity_plot_test_set.png')
+        plt.close()
+
+        # Validation Set Error Distribution Plot
+        validation_errors = y_val_pred - y_val
+        plt.figure(figsize=(10, 6))
+        plt.hist(validation_errors, bins=30, alpha=0.7)
+        plt.xlabel('Error (Predicted - True) on Validation Set')
+        plt.ylabel('Count')
+        plt.title('Validation Set: Error Distribution')
+        plt.tight_layout()
+        plt.savefig('error_dist_validation_set.png')
+        plt.close()
+
+        # Test Set Error Distribution Plot
+        test_errors = y_test_pred - y_test
+        plt.figure(figsize=(10, 6))
+        plt.hist(test_errors, bins=30, alpha=0.7)
+        plt.xlabel('Error (Predicted - True) on Test Set')
+        plt.ylabel('Count')
+        plt.title('Test Set: Error Distribution')
+        plt.tight_layout()
+        plt.savefig('error_dist_test_set.png')
+        plt.close()
+
+        # Save test predictions with metadata
+        # y_test and y_test_pred are from get_preds(test_loader)
+        # metadata_test_df has columns: 'Smiles', 'Molecular Formula', 'Amine Class', 'Inchi Key'
+        predictions_df = pd.DataFrame({
+            'SMILES': metadata_test_df['Smiles'],
+            'Molecular Formula': metadata_test_df['Molecular Formula'],
+            'Amine Class': metadata_test_df['Amine Class'],
+            'Inchi Key': metadata_test_df['Inchi Key'],
+            'Actual_pKa': y_test,
+            'Predicted_pKa': y_test_pred
+        })
+        predictions_df.to_csv('pka_predictions_fusion.csv', index=False)
+        print("\nTest predictions saved to 'pka_predictions_fusion.csv'")
 
         # Plotting
         epochs = np.arange(1, len(train_losses) + 1)
@@ -263,7 +370,8 @@ def main():
         plt.savefig("loss_curve_fusion_model.png")
         plt.close()
 
-        print(f"\nAll outputs to {output_path} and loss_curve_fusion_model.png")
+        print(f"\nAll console outputs to {output_path}.")
+        print("Generated files: loss_curve_fusion_model.png, parity_plot_validation_set.png, parity_plot_test_set.png, error_dist_validation_set.png, error_dist_test_set.png, pka_predictions_fusion.csv")
 
     except Exception as e:
         # Always log to both file and console
