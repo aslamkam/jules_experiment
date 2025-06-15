@@ -7,6 +7,8 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
+import matplotlib.pyplot as plt
+import sys
 
 import torch
 import torch.nn as nn
@@ -26,10 +28,39 @@ def parse_benson_groups(text):
     dict_str = match.group(1) if match else text
     return ast.literal_eval(dict_str)
 
-# Load Benson group data
-benson_path = r"C:\Users\kaslam\OneDrive - University of Guelph\My Research\data2_12C_Chembl_Benson_Groups\Amines_12C_CHEMBL_benson_matched_with_pKa.xlsx"
-df = pd.read_excel(benson_path)
-df['features'] = df['benson_groups'].apply(parse_benson_groups)
+# Define relative paths
+script_dir = os.path.dirname(__file__) # Assuming __file__ is defined; for robustness: os.path.dirname(os.path.abspath(__file__))
+output_file_path = os.path.join(script_dir, "output.txt")
+
+base_dir = os.path.join(script_dir, '..', '..') # Go up two levels
+
+benson_path = os.path.join(base_dir, "Features", "Chembl-12C", "Benson-Groups", "ChEMBL_amines_12C.xlsx")
+csv_path = os.path.join(base_dir, "Features", "Chembl-12C", "ChEMBL_amines_12C.csv")
+
+# Redirect stdout
+original_stdout = sys.stdout
+output_file_handle = None
+
+try:
+    output_file_handle = open(output_file_path, 'w')
+    sys.stdout = output_file_handle
+
+    # Load data
+    df_benson = pd.read_excel(benson_path)
+df_csv = pd.read_csv(csv_path)
+
+# Pre-process Benson data
+df_benson['features'] = df_benson['benson_groups'].apply(parse_benson_groups)
+df_benson = df_benson[['Smiles', 'features']]
+
+# Pre-process CSV data
+df_csv = df_csv[['Smiles', 'CX Basic pKa']]
+df_csv = df_csv.rename(columns={'CX Basic pKa': 'pka_value'})
+
+# Merge DataFrames
+df = pd.merge(df_csv, df_benson, on='Smiles', how='inner')
+
+# Handle Missing Values
 df = df.dropna(subset=['features', 'pka_value', 'Smiles']).reset_index(drop=True)
 
 dict_vec = DictVectorizer(sparse=False)
@@ -87,18 +118,29 @@ for i,row in df.iterrows():
 targets = torch.tensor(targets, dtype=torch.float)
 groups = torch.tensor(groups, dtype=torch.float)
 
-# Train-test split indices
-train_idx, test_idx = train_test_split(np.arange(len(graphs)), test_size=0.2, random_state=42)
+# Train-validation-test split indices
+all_indices = np.arange(len(graphs))
+
+# Split into train_val and test
+train_val_idx, test_idx = train_test_split(all_indices, test_size=0.2, random_state=42)
+
+# Split train_val into train and validation
+train_idx, val_idx = train_test_split(train_val_idx, test_size=0.2, random_state=42) # 0.2 of 0.8 is 0.16 for validation
 
 train_graphs = [graphs[i] for i in train_idx]
 train_groups = groups[train_idx]
 train_y = targets[train_idx]
+
+val_graphs = [graphs[i] for i in val_idx]
+val_groups = groups[val_idx]
+val_y = targets[val_idx]
 
 test_graphs = [graphs[i] for i in test_idx]
 test_groups = groups[test_idx]
 test_y = targets[test_idx]
 
 train_loader = DataLoader(list(zip(train_graphs, train_groups, train_y)), batch_size=32, shuffle=True)
+val_loader = DataLoader(list(zip(val_graphs, val_groups, val_y)), batch_size=32)
 test_loader = DataLoader(list(zip(test_graphs, test_groups, test_y)), batch_size=32)
 
 # -------------------------------
@@ -189,6 +231,42 @@ def evaluate(loader):
     all_y = torch.cat(all_y).numpy()
     return all_y, all_preds
 
+def print_metrics(y_true, y_pred, set_name):
+    mae = mean_absolute_error(y_true, y_pred)
+    mse = mean_squared_error(y_true, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_true, y_pred)
+
+    print(f"\n--- {set_name} Metrics ---")
+    print(f"MAE: {mae:.4f}")
+    print(f"MSE: {mse:.4f}")
+    print(f"RMSE: {rmse:.4f}")
+    print(f"R^2: {r2:.4f}")
+
+    errors = y_pred - y_true
+    # print(f"{set_name} Errors (predicted - true): {errors.tolist()}") # Optional: can be very verbose
+    abs_errors = np.abs(errors)
+
+    if len(abs_errors) > 0:
+        max_abs_error = np.max(abs_errors)
+        pct_err_le_02 = np.sum(abs_errors <= 0.2) / len(abs_errors) * 100
+        pct_err_gt0_le_02 = np.sum((errors > 0) & (errors <= 0.2)) / len(errors) * 100
+        pct_err_gt_neg02_lt0 = np.sum((errors > -0.2) & (errors < 0)) / len(errors) * 100
+        pct_err_le_04 = np.sum(abs_errors <= 0.4) / len(abs_errors) * 100
+        pct_err_gt0_le_04 = np.sum((errors > 0) & (errors <= 0.4)) / len(errors) * 100
+        pct_err_gt_neg04_lt0 = np.sum((errors > -0.4) & (errors < 0)) / len(errors) * 100
+
+        print(f"Max Abs Error: {max_abs_error:.4f}")
+        print(f"% |Err|<=0.2: {pct_err_le_02:.3f}%")
+        print(f"% Err in (0,0.2]: {pct_err_gt0_le_02:.3f}%")
+        print(f"% Err in (-0.2,0): {pct_err_gt_neg02_lt0:.3f}%")
+        print(f"% |Err|<=0.4: {pct_err_le_04:.3f}%")
+        print(f"% Err in (0,0.4]: {pct_err_gt0_le_04:.3f}%")
+        print(f"% Err in (-0.4,0): {pct_err_gt_neg04_lt0:.3f}%")
+    else:
+        print("No errors to calculate additional metrics.")
+    print("-------------------------")
+
 print("Using device:", device)
 if device.type == 'cuda':
     print(f"  --> GPU name: {torch.cuda.get_device_name(0)}")
@@ -197,15 +275,112 @@ if device.type == 'cuda':
 
 # Run training
 epochs=1000
+train_losses = []
+val_losses = []
+
 for ep in range(1, epochs+1):
-    loss = train()
-    if ep % 10 == 0:
-        y_true, y_pred = evaluate(test_loader)
-        print(f"Epoch {ep}: Train Loss={loss:.4f}, Test MAE={mean_absolute_error(y_true, y_pred):.4f}")
+    train_loss = train()
+    train_losses.append(train_loss)
+
+    if ep % 10 == 0 or ep == epochs:
+        y_val_true, y_val_pred = evaluate(val_loader)
+        # Ensure y_val_true is a tensor for criterion
+        val_loss = criterion(torch.tensor(y_val_pred), torch.tensor(y_val_true)).item()
+        val_losses.append(val_loss)
+        val_mae = mean_absolute_error(y_val_true, y_val_pred)
+        print(f"Epoch {ep}: Train Loss={train_loss:.4f}, Val Loss={val_loss:.4f}, Val MAE={val_mae:.4f}")
 
 # Final evaluation
-y_true, y_pred = evaluate(test_loader)
-print("MAE:", mean_absolute_error(y_true, y_pred))
-print("MSE:", mean_squared_error(y_true, y_pred))
-print("RMSE:", np.sqrt(mean_squared_error(y_true, y_pred)))
-print("R2:", r2_score(y_true, y_pred))
+y_val_true, y_val_pred = evaluate(val_loader)
+print_metrics(y_val_true, y_val_pred, "Validation Set")
+
+y_test_true, y_test_pred = evaluate(test_loader)
+print_metrics(y_test_true, y_test_pred, "Test Set")
+
+# -------------------------------
+# Plotting Results
+# -------------------------------
+
+# Plot Loss Curve
+plt.figure(figsize=(8, 6))
+plt.plot(np.arange(1, len(train_losses) + 1), train_losses, label="Train Loss")
+val_loss_epochs = [ep for ep in range(1, epochs + 1) if ep % 10 == 0 or ep == epochs]
+if len(val_loss_epochs) == len(val_losses):
+    plt.plot(val_loss_epochs, val_losses, label="Validation Loss", marker='o')
+else: # Fallback if lengths don't match
+    # This case might indicate an issue in how val_losses were collected or epochs variable availability at this stage.
+    # For robustness, plot with a simple sequence if epoch numbers are not perfectly aligned.
+    plt.plot(np.linspace(1, len(train_losses), len(val_losses)), val_losses, label="Validation Loss (scaled x-axis)", marker='o')
+plt.xlabel("Epoch")
+plt.ylabel("Loss (MSE)")
+plt.title("Training and Validation Loss Curve - Fusion Model")
+plt.legend()
+plt.savefig("loss_curve_fusion_model.png")
+plt.close()
+
+# Plot Parity and Error Distribution for Validation Set
+plt.figure(figsize=(6, 5))
+plt.scatter(y_val_true, y_val_pred, alpha=0.6, label='Validation Data')
+plt.xlabel("True pKa (Validation Set)")
+plt.ylabel("Predicted pKa (Validation Set)")
+plt.title("Validation Set: True vs Predicted pKa")
+if len(y_val_true) > 0 and len(y_val_pred) > 0:
+    min_val = min(np.min(y_val_true), np.min(y_val_pred))
+    max_val = max(np.max(y_val_true), np.max(y_val_pred))
+    plt.plot([min_val, max_val], [min_val, max_val], 'r--', label='y=x')
+plt.legend()
+plt.savefig("parity_plot_validation_set.png")
+plt.close()
+
+validation_errors = y_val_pred - y_val_true
+plt.figure(figsize=(6, 5))
+plt.hist(validation_errors, bins=20)
+plt.xlabel('Error (Predicted - True) on Validation Set')
+plt.ylabel('Count')
+plt.title('Validation Set: Error Distribution')
+plt.savefig("error_dist_validation_set.png")
+plt.close()
+
+# Plot Parity and Error Distribution for Test Set
+plt.figure(figsize=(6, 5))
+plt.scatter(y_test_true, y_test_pred, alpha=0.6, label='Test Data')
+plt.xlabel("True pKa (Test Set)")
+plt.ylabel("Predicted pKa (Test Set)")
+plt.title("Test Set: True vs Predicted pKa")
+if len(y_test_true) > 0 and len(y_test_pred) > 0:
+    min_val = min(np.min(y_test_true), np.min(y_test_pred))
+    max_val = max(np.max(y_test_true), np.max(y_test_pred))
+    plt.plot([min_val, max_val], [min_val, max_val], 'r--', label='y=x')
+plt.legend()
+plt.savefig("parity_plot_test_set.png")
+plt.close()
+
+test_errors = y_test_pred - y_test_true
+plt.figure(figsize=(6, 5))
+plt.hist(test_errors, bins=20)
+plt.xlabel('Error (Predicted - True) on Test Set')
+plt.ylabel('Count')
+plt.title('Test Set: Error Distribution')
+plt.savefig("error_dist_test_set.png")
+plt.close()
+
+print("\nPlots generated: loss_curve_fusion_model.png, parity_plot_validation_set.png, error_dist_validation_set.png, parity_plot_test_set.png, error_dist_test_set.png")
+print(f"\nAll output successfully written to {output_file_path}")
+
+except Exception as e:
+    # Print to original stdout if an error occurs
+    print(f"An error occurred: {e}", file=original_stdout)
+    # Optionally, log to file if it's open
+    if output_file_handle and not output_file_handle.closed:
+        print(f"An error occurred during execution: {e}", file=output_file_handle)
+    import traceback
+    traceback.print_exc(file=original_stdout)
+    if output_file_handle and not output_file_handle.closed:
+        traceback.print_exc(file=output_file_handle)
+    raise # Re-raise the exception
+
+finally:
+    if output_file_handle and not output_file_handle.closed:
+        output_file_handle.close()
+    sys.stdout = original_stdout # Restore original stdout
+    print("Execution finished. Standard output was redirected.") # This will print to console
