@@ -252,7 +252,7 @@ def main():
 
         # Training loop
         train_losses, val_losses = [], []
-        for epoch in range(1, 11):
+        for epoch in range(1, 1001):
             model.train()
             total_loss = 0.0
             for g, b, y in train_loader:
@@ -360,7 +360,7 @@ def main():
 
         # Plotting
         epochs = np.arange(1, len(train_losses) + 1)
-        val_epochs = np.arange(10, 11, 10).tolist()
+        val_epochs = np.arange(10, 1001, 10).tolist()
         plt.figure(figsize=(8, 6))
         plt.plot(epochs, train_losses, label="Train MSE")
         plt.plot(val_epochs, val_losses, label="Val MSE", marker='o')
