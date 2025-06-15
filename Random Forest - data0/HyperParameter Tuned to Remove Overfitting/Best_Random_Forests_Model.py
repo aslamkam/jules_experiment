@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import sys # Added for output redirection
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.ensemble import RandomForestRegressor
@@ -11,8 +12,8 @@ import joblib  # Added import for model serialization
 
 # Paths to datasets
 
-dataset_path = '../../data/available-amine-pka-dataset-full.csv'
-sigma_profiles_path = '../../data/SigmaProfileData/SigmaProfileData'
+dataset_path = '../../Features/Chembl-12C/ChEMBL_amines_12C.csv'
+sigma_profiles_path = '../../Features/Chembl-12C/Orca-Sigma-Profile/ChEMBL_12C_SigmaProfiles_Orca-5899'
 
 
 #dataset_path = '/home/kaslam/scratch/data/available-amine-pka-dataset.csv'
@@ -32,21 +33,22 @@ def load_sigma_profile(file_path):
 def preprocess_data():
     # Load the amines pKa dataset with correct column names
     amines_df = pd.read_csv(dataset_path)
+    amines_df.rename(columns={'Smiles': 'SMILES'}, inplace=True)
     
     # Ensure we have the additional columns we want
-    columns_to_keep = ['ID', 'pka_value', 'formula', 'amine_class', 'smiles']
+    columns_to_keep = ['ChEMBL ID', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'SMILES', 'Inchi Key']
     amines_df = amines_df[columns_to_keep]
     
     # Aggregate Sigma profile data
     sigma_profiles = []
     ids_with_profiles = []
     
-    for molecule_id in amines_df['ID']:
-        file_path = os.path.join(sigma_profiles_path, f'{molecule_id:06d}.txt')
+    for chembl_id, inchi_key in amines_df[['ChEMBL ID', 'Inchi Key']].values:
+        file_path = os.path.join(sigma_profiles_path, f'{inchi_key}.txt')
         sigma_profile = load_sigma_profile(file_path)
         if sigma_profile is not None and np.all(np.isfinite(sigma_profile)):
             sigma_profiles.append(sigma_profile)
-            ids_with_profiles.append(molecule_id)
+            ids_with_profiles.append(chembl_id)
     
     # Create dataframe of Sigma profiles (only sigma values, no charge density)
     sigma_profiles_array = np.array(sigma_profiles)
@@ -55,17 +57,17 @@ def preprocess_data():
     # Convert to float32 to prevent precision issues
     sigma_profiles_df = pd.DataFrame(sigma_profiles_array.astype(np.float32), 
                                    columns=column_names)
-    sigma_profiles_df['ID'] = ids_with_profiles
+    sigma_profiles_df['ChEMBL ID'] = ids_with_profiles
     
     # Merge with pKa data
-    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ID')
+    merged_df = pd.merge(amines_df, sigma_profiles_df, on='ChEMBL ID')
     
     # Remove any remaining invalid values
     merged_df = merged_df.replace([np.inf, -np.inf], np.nan).dropna()
     
     return merged_df, column_names
 
-def train_and_evaluate_model(X_train, X_test, y_train, y_test, column_names, metadata_train, metadata_test, best_params, scaler):
+def train_and_evaluate_model(X_train, X_val, X_test, y_train, y_val, y_test, column_names, metadata_train, metadata_val, metadata_test, best_params, scaler):
     # Create model with best parameters
     best_model = RandomForestRegressor(
         n_estimators=best_params['n_estimators'],
@@ -90,6 +92,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test, column_names, met
 
     # Predictions for training and test sets
     y_train_pred = best_model.predict(X_train)
+    y_val_pred = best_model.predict(X_val)
     y_test_pred = best_model.predict(X_test)
     
     # Performance metrics for training set
@@ -98,13 +101,48 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test, column_names, met
     print("RMSE:", np.sqrt(mean_squared_error(y_train, y_train_pred)))
     print("MAE:", mean_absolute_error(y_train, y_train_pred))
     print("R^2:", r2_score(y_train, y_train_pred))
-    
+
+    # Performance metrics for validation set
+    print("\nValidation Set Performance:")
+    print("MSE:", mean_squared_error(y_val, y_val_pred))
+    print("RMSE:", np.sqrt(mean_squared_error(y_val, y_val_pred)))
+    print("MAE:", mean_absolute_error(y_val, y_val_pred))
+    print("R^2:", r2_score(y_val, y_val_pred))
+
+    # Detailed error statistics for validation set
+    validation_errors = y_val_pred - y_val
+    abs_validation_errors = np.abs(validation_errors)
+    if len(abs_validation_errors) > 0:
+        print("Max Abs Error (Validation):", np.max(abs_validation_errors))
+        print("% |Err|<=0.2 (Validation):", np.sum(abs_validation_errors <= 0.2) / len(abs_validation_errors) * 100)
+        print("% Err in (0,0.2] (Validation):", np.sum((validation_errors > 0) & (validation_errors <= 0.2)) / len(validation_errors) * 100)
+        print("% Err in (-0.2,0) (Validation):", np.sum((validation_errors < 0) & (validation_errors >= -0.2)) / len(validation_errors) * 100)
+        print("% |Err|<=0.4 (Validation):", np.sum(abs_validation_errors <= 0.4) / len(abs_validation_errors) * 100)
+        print("% Err in (0,0.4] (Validation):", np.sum((validation_errors > 0) & (validation_errors <= 0.4)) / len(validation_errors) * 100)
+        print("% Err in (-0.4,0) (Validation):", np.sum((validation_errors < 0) & (validation_errors >= -0.4)) / len(validation_errors) * 100)
+    else:
+        print("Validation set is empty, skipping detailed error statistics.")
+
     # Performance metrics for test set
     print("\nTest Set Performance:")
     print("MSE:", mean_squared_error(y_test, y_test_pred))
     print("RMSE:", np.sqrt(mean_squared_error(y_test, y_test_pred)))
     print("MAE:", mean_absolute_error(y_test, y_test_pred))
     print("R^2:", r2_score(y_test, y_test_pred))
+
+    # Detailed error statistics for test set
+    test_errors = y_test_pred - y_test
+    abs_test_errors = np.abs(test_errors)
+    if len(abs_test_errors) > 0:
+        print("Max Abs Error (Test):", np.max(abs_test_errors))
+        print("% |Err|<=0.2 (Test):", np.sum(abs_test_errors <= 0.2) / len(abs_test_errors) * 100)
+        print("% Err in (0,0.2] (Test):", np.sum((test_errors > 0) & (test_errors <= 0.2)) / len(test_errors) * 100)
+        print("% Err in (-0.2,0) (Test):", np.sum((test_errors < 0) & (test_errors >= -0.2)) / len(test_errors) * 100)
+        print("% |Err|<=0.4 (Test):", np.sum(abs_test_errors <= 0.4) / len(abs_test_errors) * 100)
+        print("% Err in (0,0.4] (Test):", np.sum((test_errors > 0) & (test_errors <= 0.4)) / len(test_errors) * 100)
+        print("% Err in (-0.4,0) (Test):", np.sum((test_errors < 0) & (test_errors >= -0.4)) / len(test_errors) * 100)
+    else:
+        print("Test set is empty, skipping detailed error statistics.")
     
     # Feature importance
     feature_importance = pd.DataFrame({
@@ -116,39 +154,67 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test, column_names, met
     
     # Create predictions dataframe with metadata
     predictions_df = pd.DataFrame({
-        'formula': metadata_test['formula'],
-        'amine_class': metadata_test['amine_class'],
-        'smiles': metadata_test['smiles'],
+        'Molecular Formula': metadata_test['Molecular Formula'],
+        'Amine Class': metadata_test['Amine Class'],
+        'SMILES': metadata_test['SMILES'],
+        'Inchi Key': metadata_test['Inchi Key'],
         'Actual_pKa': y_test,
         'Predicted_pKa': y_test_pred
     })
-    predictions_df.to_csv('pka_predictions_loaded_params.csv', index=False)
-    print("\nPredictions saved to 'pka_predictions_loaded_params.csv'")
-    
-    # Visualization: Actual vs Predicted pKa
-    plt.figure(figsize=(10, 10))
-    plt.scatter(y_test, y_test_pred, alpha=0.7)
-    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
-    plt.plot([y_test.min(), y_test.max()], [y_test.min() + 1, y_test.max() + 1], color='orange', linestyle='--', lw=2, label='+1 Unit', alpha=0.7)
-    plt.plot([y_test.min(), y_test.max()], [y_test.min() - 1, y_test.max() - 1], color='orange', linestyle='--', lw=2, label='-1 Unit', alpha=0.7)
-    plt.xlabel('Actual pKa')
-    plt.ylabel('Predicted pKa')
-    plt.title('Actual vs Predicted pKa Values')
-    plt.tight_layout()
-    plt.savefig('actual_vs_predicted_pka.png')
-    plt.close()
+    predictions_df.to_csv('pka_predictions_rf.csv', index=False)
+    print("\nPredictions saved to 'pka_predictions_rf.csv'")
 
+    # Validation Set Plots
+    if y_val.size > 0:
+        # Parity Plot (Validation Set)
+        plt.figure(figsize=(10, 6))
+        plt.scatter(y_val, y_val_pred, alpha=0.7)
+        plt.plot([y_val.min(), y_val.max()], [y_val.min(), y_val.max()], 'r--', lw=2)
+        plt.xlabel('Actual pKa (Validation Set)')
+        plt.ylabel('Predicted pKa (Validation Set)')
+        plt.title('Validation Set: True vs Predicted pKa')
+        plt.tight_layout()
+        plt.savefig('parity_plot_validation_set.png')
+        plt.close()
 
-    # Subplot 2: Residual Plot
-    plt.figure(figsize=(10, 6))
-    residuals = y_test_pred - y_test
-    plt.scatter(y_test_pred, residuals, alpha=0.7, edgecolor='k')
-    plt.axhline(0, color='r', linestyle='--', lw=2)
-    plt.xlabel('Predicted pKa')
-    plt.ylabel('Residuals')
-    plt.title('Residuals vs Predicted pKa')
-    plt.savefig('residual.png')
-    plt.close()
+        # Error Distribution Plot (Validation Set)
+        if validation_errors.size > 0:
+            plt.figure(figsize=(10, 6))
+            plt.hist(validation_errors, bins=30, alpha=0.7)
+            plt.xlabel('Error (Predicted - True) on Validation Set')
+            plt.ylabel('Count')
+            plt.title('Validation Set: Error Distribution')
+            plt.tight_layout()
+            plt.savefig('error_dist_validation_set.png')
+            plt.close()
+    else:
+        print("Validation set is empty, skipping validation plots.")
+
+    # Test Set Plots
+    if y_test.size > 0:
+        # Parity Plot (Test Set)
+        plt.figure(figsize=(10, 6)) # Changed figsize to (10,6) to match MLP
+        plt.scatter(y_test, y_test_pred, alpha=0.7)
+        plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+        plt.xlabel('Actual pKa (Test Set)')
+        plt.ylabel('Predicted pKa (Test Set)')
+        plt.title('Test Set: True vs Predicted pKa')
+        plt.tight_layout()
+        plt.savefig('parity_plot_test_set.png') # Changed filename
+        plt.close()
+
+        # Error Distribution Plot (Test Set)
+        if test_errors.size > 0:
+            plt.figure(figsize=(10, 6))
+            plt.hist(test_errors, bins=30, alpha=0.7)
+            plt.xlabel('Error (Predicted - True) on Test Set')
+            plt.ylabel('Count')
+            plt.title('Test Set: Error Distribution')
+            plt.tight_layout()
+            plt.savefig('error_dist_test_set.png')
+            plt.close()
+    else:
+        print("Test set is empty, skipping test plots.")
     
     return best_model, feature_importance
 
@@ -156,6 +222,12 @@ def main():
     # Load best parameters
     best_params_df = pd.read_csv(best_params_path)
     best_params = best_params_df.to_dict(orient='records')[0]
+
+    # Save the parameters that were actually used for this run
+    # (which are the ones loaded from best_rf_parameters.csv)
+    used_params_df = pd.DataFrame([best_params])
+    used_params_df.to_csv('parameters_used_rf.csv', index=False)
+    print("\nParameters used for this run saved to 'parameters_used_rf.csv'")
     
     # Convert string parameters to appropriate types
     best_params['n_estimators'] = int(best_params['n_estimators'])
@@ -169,23 +241,40 @@ def main():
     merged_df, column_names = preprocess_data()
     
     # Prepare features, target, and metadata
-    X = merged_df.drop(columns=['ID', 'pka_value', 'formula', 'amine_class', 'smiles']).values
-    y = merged_df['pka_value'].values
-    metadata = merged_df[['formula', 'amine_class', 'smiles']]
+    X = merged_df.drop(columns=['ChEMBL ID', 'CX Basic pKa', 'Molecular Formula', 'Amine Class', 'SMILES', 'Inchi Key']).values
+    y = merged_df['CX Basic pKa'].values
+    metadata = merged_df[['Molecular Formula', 'Amine Class', 'SMILES', 'Inchi Key']]
     
     # Scale features
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     
     # Split data
-    X_train, X_test, y_train, y_test, metadata_train, metadata_test = train_test_split(
+    # First split: Train-Validation vs Test
+    X_train_val, X_test, y_train_val, y_test, metadata_train_val, metadata_test = train_test_split(
         X_scaled, y, metadata, test_size=0.2, random_state=42
     )
     
+    # Second split: Train vs Validation
+    X_train, X_val, y_train, y_val, metadata_train, metadata_val = train_test_split(
+        X_train_val, y_train_val, metadata_train_val, test_size=0.2, random_state=42 # 0.2 of 0.8 is 0.16 of total
+    )
+
     # Train and evaluate model with loaded parameters
     best_model, feature_importance = train_and_evaluate_model(
-        X_train, X_test, y_train, y_test, column_names, metadata_train, metadata_test, best_params, scaler
+        X_train, X_val, X_test, y_train, y_val, y_test, column_names, metadata_train, metadata_val, metadata_test, best_params, scaler
     )
 
 if __name__ == "__main__":
-    main()
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_file_path = os.path.join(script_dir, "output.txt")
+    original_stdout = sys.stdout
+
+    try:
+        with open(output_file_path, 'w') as f:
+            sys.stdout = f
+            main()  # Call the main function
+    finally:
+        sys.stdout.close() # Close the file stream
+        sys.stdout = original_stdout # Restore original stdout
+    print(f"All console output saved to {output_file_path}")
