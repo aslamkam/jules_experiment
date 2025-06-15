@@ -1,0 +1,53 @@
+Using device: cpu
+GCN model architecture parameters saved to 'gcn_model_params.txt'
+
+--- Training GCN Model ---
+GCN Epoch 20/100, Loss: 65.1198
+GCN Epoch 40/100, Loss: 54.3914
+GCN Epoch 60/100, Loss: 44.3942
+GCN Epoch 80/100, Loss: 35.2872
+GCN Epoch 100/100, Loss: 27.0843
+GCN model state dictionary saved to 'gcn_model_statedict.pt'
+--- Extracting GCN Embeddings ---
+
+--- Training XGBoost Regressor ---
+XGBoost training complete.
+XGBoost parameters saved to 'best_xgboost_parameters.csv'
+
+--- Train Set Metrics ---
+R-squared (R2): 0.9878
+Mean Squared Error (MSE): 0.0231
+Root Mean Squared Error (RMSE): 0.1518
+Mean Absolute Error (MAE): 0.1117
+--------------------------
+
+--- Validation Set Metrics ---
+R-squared (R2): 0.8177
+Mean Squared Error (MSE): 0.3558
+Root Mean Squared Error (RMSE): 0.5965
+Mean Absolute Error (MAE): 0.3644
+Max Abs Error (Validation): 5.4644
+% |Err|<=0.2 (Validation): 48.09%
+% Err in (0,0.2] (Validation): 22.56%
+% Err in (-0.2,0) (Validation): 25.53%
+% |Err|<=0.4 (Validation): 69.30%
+% Err in (0,0.4] (Validation): 31.55%
+% Err in (-0.4,0) (Validation): 37.74%
+--------------------------
+
+--- Test Set Metrics ---
+R-squared (R2): 0.8371
+Mean Squared Error (MSE): 0.3207
+Root Mean Squared Error (RMSE): 0.5663
+Mean Absolute Error (MAE): 0.3430
+Max Abs Error (Test): 3.8201
+% |Err|<=0.2 (Test): 51.23%
+% Err in (0,0.2] (Test): 25.11%
+% Err in (-0.2,0) (Test): 26.12%
+% |Err|<=0.4 (Test): 72.94%
+% Err in (0,0.4] (Test): 35.03%
+% Err in (-0.4,0) (Test): 37.91%
+--------------------------
+
+Generated and saved parity and error plots.
+Test predictions saved to 'pka_predictions_xgboost_fusion.csv'
